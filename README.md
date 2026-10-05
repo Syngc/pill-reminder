@@ -1,4 +1,4 @@
-# Mis Medicinas
+# MedRing
 
 An Android app that helps older adults take their medicines on time, built for the ML Empowerment Build Challenge.
 
