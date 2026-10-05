@@ -57,3 +57,32 @@ Errors return `{"detail": "<message in the requested language>"}`. The app shows
 ## Status
 
 All code paths are covered by unit tests with a fake client. The service has **not yet made a live call** to the Claude API. Run one real prescription through it once a key is configured.
+
+## Deployment (Cloud Run)
+
+Live at `https://pill-reminder-backend-1025645725559.us-central1.run.app` (project `pill-reminder-510721`, region `us-central1`).
+
+Redeploy after changes:
+
+```bash
+./deploy.sh
+```
+
+How it is set up:
+
+- **Secrets** live in Secret Manager and reach the container only as environment variables at runtime: `anthropic-api-key` (Claude) and `app-api-key` (the shared key the app sends as `X-API-Key`). The app's copy of the access key is in `mobile/local.properties`, which is git-ignored.
+- **Service account** `pill-reminder-backend@…` can read only those two secrets.
+- **Startup guard:** on Cloud Run the service refuses to start if `APP_API_KEY` is empty.
+- **Limits:** at most 2 instances × 20 concurrent requests, a 300 s timeout, and it scales to zero when idle. Set a monthly spend limit on the Anthropic workspace as a backstop.
+
+Rotate a secret (for example, if the APK's access key leaks):
+
+```bash
+openssl rand -hex 32 | tr -d '\n' | gcloud secrets versions add app-api-key --data-file=-
+./deploy.sh   # picks up :latest
+```
+
+Then put the new key in `mobile/local.properties` (`backend.apiKey=…`) and rebuild the APK.
+
+Logs: `gcloud run services logs read pill-reminder-backend --region us-central1 --limit 50`
+
