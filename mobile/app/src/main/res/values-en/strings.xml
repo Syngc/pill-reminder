@@ -80,4 +80,12 @@
     <string name="change_time">Change %1$s</string>
     <string name="remove_time">Remove %1$s</string>
     <string name="save">Save</string>
+
+    <!-- Interval -->
+    <string name="keep_interval">Move all times together (every %1$s)</string>
+    <plurals name="interval_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <string name="interval_hours_minutes">%1$d h %2$d min</string>
 </resources>
