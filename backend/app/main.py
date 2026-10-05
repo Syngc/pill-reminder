@@ -1,5 +1,7 @@
 import logging
+import os
 import secrets
+from contextlib import asynccontextmanager
 from functools import lru_cache
 from pathlib import Path
 
@@ -58,7 +60,15 @@ def require_api_key(
         raise HTTPException(status_code=401, detail=message("invalid_api_key", language))
 
 
-app = FastAPI(title="Pill Reminder Backend", version="0.1.0")
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    # Cloud Run sets K_SERVICE. Deployed without an access key, anyone could spend the Claude budget.
+    if os.environ.get("K_SERVICE") and not get_settings().app_api_key:
+        raise RuntimeError("APP_API_KEY must be set when deployed")
+    yield
+
+
+app = FastAPI(title="Pill Reminder Backend", version="0.1.0", lifespan=lifespan)
 
 
 @app.get("/health")

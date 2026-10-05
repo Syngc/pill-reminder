@@ -160,3 +160,26 @@ def test_anthropic_key_is_secret():
     settings = Settings(anthropic_api_key="sk-ant-test-value")
     assert "sk-ant-test-value" not in repr(settings)
     assert "sk-ant-test-value" not in str(settings.model_dump())
+
+
+def test_refuses_to_start_on_cloud_run_without_access_key(monkeypatch):
+    monkeypatch.setenv("K_SERVICE", "pill-reminder-backend")
+    monkeypatch.setenv("APP_API_KEY", "")
+    get_settings.cache_clear()
+    try:
+        with pytest.raises(RuntimeError, match="APP_API_KEY"):
+            with TestClient(app):
+                pass
+    finally:
+        get_settings.cache_clear()
+
+
+def test_starts_on_cloud_run_with_access_key(monkeypatch):
+    monkeypatch.setenv("K_SERVICE", "pill-reminder-backend")
+    monkeypatch.setenv("APP_API_KEY", "some-key")
+    get_settings.cache_clear()
+    try:
+        with TestClient(app) as c:
+            assert c.get("/health").status_code == 200
+    finally:
+        get_settings.cache_clear()
