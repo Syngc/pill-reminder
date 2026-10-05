@@ -95,4 +95,9 @@
     <string name="next_dose_tomorrow">Próxima toma: mañana, %1$s</string>
     <string name="next_dose_on">Próxima toma: %1$s, %2$s</string>
     <string name="next_dose_none">Sin más tomas: el tratamiento terminó.</string>
+
+    <!-- Search -->
+    <string name="search_medicines">Buscar medicina</string>
+    <string name="search_no_results">Ninguna medicina coincide con «%1$s».</string>
+    <string name="clear_search">Borrar búsqueda</string>
 </resources>

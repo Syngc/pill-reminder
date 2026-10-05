@@ -94,4 +94,9 @@
     <string name="next_dose_tomorrow">Next dose: tomorrow, %1$s</string>
     <string name="next_dose_on">Next dose: %1$s, %2$s</string>
     <string name="next_dose_none">No more doses: the treatment has ended.</string>
+
+    <!-- Search -->
+    <string name="search_medicines">Search medicines</string>
+    <string name="search_no_results">No medicines match “%1$s”.</string>
+    <string name="clear_search">Clear search</string>
 </resources>

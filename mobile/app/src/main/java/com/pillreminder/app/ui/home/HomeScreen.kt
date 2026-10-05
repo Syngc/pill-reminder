@@ -23,12 +23,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -39,6 +43,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -50,13 +55,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -89,6 +97,7 @@ fun HomeScreen(
     var toDelete by remember { mutableStateOf<Medication?>(null) }
     var toEdit by remember { mutableStateOf<Medication?>(null) }
     var choosingLanguage by remember { mutableStateOf(false) }
+    var query by rememberSaveable { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -139,8 +148,19 @@ fun HomeScreen(
             item { SectionTitle(stringResource(R.string.home_medicines)) }
             if (state.medications.isEmpty()) {
                 item { Text(stringResource(R.string.home_empty), style = MaterialTheme.typography.bodyLarge) }
+            } else {
+                item { SearchField(query = query, onQueryChange = { query = it }) }
             }
-            items(state.medications, key = { "med-${it.id}" }) { med ->
+            val shown = state.medications.filter { HomeViewModel.matchesSearch(it, query) }
+            if (state.medications.isNotEmpty() && shown.isEmpty()) {
+                item {
+                    Text(
+                        stringResource(R.string.search_no_results, query.trim()),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
+            items(shown, key = { "med-${it.id}" }) { med ->
                 MedicationCard(
                     med,
                     nextDose = state.nextDoses[med.id],
@@ -225,6 +245,31 @@ private fun LanguageDialog(current: AppLanguage, onChoose: (AppLanguage) -> Unit
         },
         confirmButton = {},
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
+}
+
+@Composable
+private fun SearchField(query: String, onQueryChange: (String) -> Unit) {
+    // Only hide the keyboard: clearing focus would let the same Enter key press land on
+    // (and click) the next focusable button, such as the language picker.
+    val keyboard = LocalSoftwareKeyboardController.current
+    OutlinedTextField(
+        value = query,
+        onValueChange = onQueryChange,
+        placeholder = { Text(stringResource(R.string.search_medicines)) },
+        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.clear_search))
+                }
+            }
+        },
+        singleLine = true,
+        textStyle = MaterialTheme.typography.bodyLarge,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }),
+        modifier = Modifier.fillMaxWidth(),
     )
 }
 

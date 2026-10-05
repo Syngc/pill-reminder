@@ -23,9 +23,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.text.Normalizer
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.util.Locale
 
 enum class SlotStatus { TAKEN, MISSED, PENDING, UPCOMING }
 
@@ -89,6 +91,22 @@ class HomeViewModel(
                 HomeViewModel(app.repository, app.scheduler)
             }
         }
+
+        /**
+         * Whether [medication] matches a search, ignoring case and accents so "acetaminofen"
+         * finds "Acetaminofén". Searches the name and the instructions.
+         */
+        fun matchesSearch(medication: Medication, query: String): Boolean {
+            val needle = query.normalizedForSearch()
+            if (needle.isEmpty()) return true
+            return medication.name.normalizedForSearch().contains(needle) ||
+                medication.instructions.normalizedForSearch().contains(needle)
+        }
+
+        private fun String.normalizedForSearch(): String =
+            Normalizer.normalize(trim(), Normalizer.Form.NFD).replace(COMBINING_MARKS, "").lowercase(Locale.ROOT)
+
+        private val COMBINING_MARKS = Regex("\\p{Mn}+")
 
         /** When this medicine's alarm will next ring, or null when its treatment has ended. */
         fun nextDose(medication: Medication, now: LocalDateTime): LocalDateTime? =
