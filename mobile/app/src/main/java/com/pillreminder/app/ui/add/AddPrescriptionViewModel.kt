@@ -116,7 +116,7 @@ class AddPrescriptionViewModel(private val app: PillReminderApp) : ViewModel() {
                         instructions = it.instructions.trim(),
                         startDate = now.toLocalDate(),
                         durationDays = it.durationDays.toIntOrNull()?.takeIf { days -> days > 0 },
-                        addedAt = now,
+                        scheduleSince = now,
                     )
                 }
             )

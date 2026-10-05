@@ -7,10 +7,12 @@ import androidx.room.Database
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RenameColumn
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import androidx.room.migration.AutoMigrationSpec
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -37,6 +39,9 @@ interface MedicationDao {
     @Insert
     suspend fun insertAll(medications: List<Medication>)
 
+    @Query("UPDATE medications SET times = :times, scheduleSince = :since WHERE id = :id")
+    suspend fun updateTimes(id: Long, times: List<String>, since: LocalDateTime)
+
     @Query("DELETE FROM medications WHERE id = :id")
     suspend fun delete(id: Long)
 }
@@ -58,13 +63,19 @@ interface DoseLogDao {
 
 @Database(
     entities = [Medication::class, DoseLog::class],
-    version = 2,
-    autoMigrations = [AutoMigration(from = 1, to = 2)],
+    version = 3,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3, spec = AppDatabase.RenameAddedAt::class),
+    ],
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun medicationDao(): MedicationDao
     abstract fun doseLogDao(): DoseLogDao
+
+    @RenameColumn(tableName = "medications", fromColumnName = "addedAt", toColumnName = "scheduleSince")
+    class RenameAddedAt : AutoMigrationSpec
 
     companion object {
         fun create(context: Context): AppDatabase =

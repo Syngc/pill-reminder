@@ -68,6 +68,7 @@ import com.pillreminder.app.R
 import com.pillreminder.app.alarm.AlarmService
 import com.pillreminder.app.data.AppLanguage
 import com.pillreminder.app.data.Medication
+import com.pillreminder.app.ui.TimesEditor
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -82,6 +83,7 @@ fun HomeScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var toDelete by remember { mutableStateOf<Medication?>(null) }
+    var toEdit by remember { mutableStateOf<Medication?>(null) }
     var choosingLanguage by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -135,7 +137,7 @@ fun HomeScreen(
                 item { Text(stringResource(R.string.home_empty), style = MaterialTheme.typography.bodyLarge) }
             }
             items(state.medications, key = { "med-${it.id}" }) { med ->
-                MedicationCard(med, onDelete = { toDelete = med })
+                MedicationCard(med, onEditTimes = { toEdit = med }, onDelete = { toDelete = med })
             }
 
             item {
@@ -157,6 +159,17 @@ fun HomeScreen(
                 if (choice != language) onChangeLanguage(choice)
             },
             onDismiss = { choosingLanguage = false },
+        )
+    }
+
+    toEdit?.let { med ->
+        EditTimesDialog(
+            medication = med,
+            onSave = { times ->
+                viewModel.updateTimes(med, times)
+                toEdit = null
+            },
+            onDismiss = { toEdit = null },
         )
     }
 
@@ -239,26 +252,56 @@ private fun StatusChip(text: String, icon: ImageVector) {
 }
 
 @Composable
-private fun MedicationCard(med: Medication, onDelete: () -> Unit) {
+private fun MedicationCard(med: Medication, onEditTimes: () -> Unit, onDelete: () -> Unit) {
     val locale = LocalConfiguration.current.locales[0]
     val dateFormat = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(locale) }
     Card(modifier = Modifier.fillMaxWidth()) {
-        Row(Modifier.padding(16.dp)) {
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(med.name, style = MaterialTheme.typography.titleLarge)
-                Text(med.dose, style = MaterialTheme.typography.bodyLarge)
-                Text(stringResource(R.string.med_times, med.times.joinToString("  ·  ")), style = MaterialTheme.typography.bodyLarge)
-                if (med.instructions.isNotBlank()) Text(med.instructions, style = MaterialTheme.typography.bodyMedium)
-                med.durationDays?.let { days ->
-                    val last = med.startDate.plusDays(days.toLong() - 1)
-                    Text(stringResource(R.string.med_until, last.format(dateFormat)), style = MaterialTheme.typography.bodyMedium)
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(verticalAlignment = Alignment.Top) {
+                Text(med.name, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
                 }
             }
-            IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
+            Text(med.dose, style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(R.string.med_times, med.times.joinToString("  ·  ")), style = MaterialTheme.typography.bodyLarge)
+            if (med.instructions.isNotBlank()) Text(med.instructions, style = MaterialTheme.typography.bodyMedium)
+            med.durationDays?.let { days ->
+                val last = med.startDate.plusDays(days.toLong() - 1)
+                Text(stringResource(R.string.med_until, last.format(dateFormat)), style = MaterialTheme.typography.bodyMedium)
+            }
+            OutlinedButton(onClick = onEditTimes, modifier = Modifier.padding(top = 8.dp).height(52.dp)) {
+                Icon(Icons.Default.Schedule, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.edit_times))
             }
         }
     }
+}
+
+@Composable
+private fun EditTimesDialog(medication: Medication, onSave: (List<String>) -> Unit, onDismiss: () -> Unit) {
+    var times by remember(medication.id) { mutableStateOf(medication.times) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.edit_times_title, medication.name)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(medication.dose, style = MaterialTheme.typography.bodyLarge)
+                Text(stringResource(R.string.edit_times_hint), style = MaterialTheme.typography.bodyMedium)
+                TimesEditor(times = times, onChange = { times = it })
+                if (times.isEmpty()) {
+                    Text(stringResource(R.string.times_need_one), color = MaterialTheme.colorScheme.error)
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onSave(times) }, enabled = times.isNotEmpty() && times != medication.times) {
+                Text(stringResource(R.string.save))
+            }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 /** Shows a banner for each permission the alarms depend on that is currently missing. */

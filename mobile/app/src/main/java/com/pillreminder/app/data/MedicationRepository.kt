@@ -2,6 +2,7 @@ package com.pillreminder.app.data
 
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class MedicationRepository(private val db: AppDatabase) {
     private val medications = db.medicationDao()
@@ -17,6 +18,9 @@ class MedicationRepository(private val db: AppDatabase) {
         medications.getAll().filter { it.isDueAt(date, time) }
 
     suspend fun add(newMedications: List<Medication>) = medications.insertAll(newMedications)
+
+    suspend fun updateTimes(id: Long, times: List<String>, since: LocalDateTime = LocalDateTime.now()) =
+        medications.updateTimes(id, times.distinct().sorted(), since)
 
     suspend fun delete(id: Long) = medications.delete(id)
 

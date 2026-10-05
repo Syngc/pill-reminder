@@ -71,4 +71,13 @@
     <!-- Errors -->
     <string name="error_no_connection">No hay conexión. Revisa el internet e intenta de nuevo.</string>
     <string name="error_bad_response">Respuesta inesperada del servidor.</string>
+
+    <!-- Edit times -->
+    <string name="edit_times">Editar horas</string>
+    <string name="edit_times_title">Horas de %1$s</string>
+    <string name="edit_times_hint">Toca una hora para cambiarla.</string>
+    <string name="times_need_one">Agrega al menos una hora. Para dejar de tomar esta medicina, elimínala.</string>
+    <string name="change_time">Cambiar %1$s</string>
+    <string name="remove_time">Quitar %1$s</string>
+    <string name="save">Guardar</string>
 </resources>

@@ -71,4 +71,13 @@
     <!-- Errors -->
     <string name="error_no_connection">No connection. Check the internet and try again.</string>
     <string name="error_bad_response">Unexpected response from the server.</string>
+
+    <!-- Edit times -->
+    <string name="edit_times">Edit times</string>
+    <string name="edit_times_title">Times for %1$s</string>
+    <string name="edit_times_hint">Tap a time to change it.</string>
+    <string name="times_need_one">Add at least one time. To stop taking this medicine, delete it.</string>
+    <string name="change_time">Change %1$s</string>
+    <string name="remove_time">Remove %1$s</string>
+    <string name="save">Save</string>
 </resources>

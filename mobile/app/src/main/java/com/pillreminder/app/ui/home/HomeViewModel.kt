@@ -40,6 +40,13 @@ class HomeViewModel(
             HomeState(today = todaySlots(meds, logs, date, LocalTime.now()), medications = meds)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeState())
 
+    fun updateTimes(medication: Medication, times: List<String>) {
+        viewModelScope.launch {
+            repository.updateTimes(medication.id, times)
+            scheduler.rescheduleAll()
+        }
+    }
+
     fun delete(medication: Medication) {
         viewModelScope.launch {
             repository.delete(medication.id)
@@ -61,8 +68,12 @@ class HomeViewModel(
             date: LocalDate,
             now: LocalTime,
         ): List<TodaySlot> {
-            return medications.flatMap { it.times }.distinct().sorted().mapNotNull { time ->
-                val due = medications.filter { it.isDueAt(date, time) }
+            // Logged doses stay in today's history even if their time was edited afterwards.
+            val times = (medications.flatMap { it.times } + logs.map { it.time }).distinct().sorted()
+            return times.mapNotNull { time ->
+                val due = medications.filter { med ->
+                    med.isDueAt(date, time) || logs.any { it.medicationId == med.id && it.time == time }
+                }
                 if (due.isEmpty()) return@mapNotNull null
                 val slotLogs = logs.filter { it.time == time }
                 val status = when {

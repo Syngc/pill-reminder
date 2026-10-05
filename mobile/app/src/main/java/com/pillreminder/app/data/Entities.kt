@@ -19,8 +19,11 @@ data class Medication(
     val startDate: LocalDate,
     /** Null means no end date was written on the prescription. */
     val durationDays: Int?,
-    /** When it was saved. Null for medicines saved before this was recorded. */
-    val addedAt: LocalDateTime? = null,
+    /**
+     * When the current [times] took effect: when the medicine was added, or its times last edited.
+     * Null for medicines saved before this was recorded.
+     */
+    val scheduleSince: LocalDateTime? = null,
 ) {
     fun isActiveOn(date: LocalDate): Boolean {
         if (date.isBefore(startDate)) return false
@@ -29,13 +32,14 @@ data class Medication(
     }
 
     /**
-     * Whether a dose at [time] on [date] is part of the schedule. Doses whose time had already
-     * passed when the medicine was added don't count, so they never show as pending.
+     * Whether a dose at [time] on [date] is part of the schedule. A time that had already passed
+     * when the schedule took effect doesn't count that day, so it never shows as pending.
      */
     fun isDueAt(date: LocalDate, time: String): Boolean {
         if (time !in times || !isActiveOn(date)) return false
-        val added = addedAt ?: return true
-        return date != added.toLocalDate() || !LocalTime.parse(time).isBefore(added.toLocalTime().withSecond(0).withNano(0))
+        val since = scheduleSince ?: return true
+        return date != since.toLocalDate() ||
+            !LocalTime.parse(time).isBefore(since.toLocalTime().withSecond(0).withNano(0))
     }
 }
 

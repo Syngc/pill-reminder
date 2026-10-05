@@ -1,6 +1,5 @@
 package com.pillreminder.app.ui.add
 
-import android.app.TimePickerDialog
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -9,8 +8,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,12 +25,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -42,7 +37,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -70,6 +64,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pillreminder.app.R
+import com.pillreminder.app.ui.TimesEditor
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -260,7 +255,6 @@ private fun WarningCard(text: String) {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DraftCard(
     draft: DraftMedication,
@@ -268,7 +262,6 @@ private fun DraftCard(
     onChange: (DraftMedication) -> Unit,
     onRemove: () -> Unit,
 ) {
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val border = if (draft.needsCheck) BorderStroke(3.dp, MaterialTheme.colorScheme.error) else null
     Card(border = border, modifier = Modifier.fillMaxWidth()) {
@@ -303,32 +296,12 @@ private fun DraftCard(
             if (draft.timesSuggested) {
                 Text(stringResource(R.string.review_times_suggested), style = MaterialTheme.typography.bodyMedium)
             }
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                draft.times.forEach { time ->
-                    InputChip(
-                        selected = false,
-                        onClick = { },
-                        label = { Text(time, style = MaterialTheme.typography.titleMedium) },
-                        trailingIcon = {
-                            IconButton(onClick = { onChange(draft.copy(times = draft.times - time)) }) {
-                                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.delete))
-                            }
-                        },
-                    )
-                }
-                AssistChip(
-                    onClick = {
-                        // Otherwise the last text field regains focus and the keyboard covers the form.
-                        focusManager.clearFocus()
-                        TimePickerDialog(context, { _, hour, minute ->
-                            val time = "%02d:%02d".format(hour, minute)
-                            onChange(draft.copy(times = (draft.times + time).distinct().sorted()))
-                        }, 8, 0, true).show()
-                    },
-                    label = { Text(stringResource(R.string.review_add_time)) },
-                    leadingIcon = { Icon(Icons.Default.Add, contentDescription = null) },
-                )
-            }
+            TimesEditor(
+                times = draft.times,
+                onChange = { onChange(draft.copy(times = it)) },
+                // Otherwise the last text field regains focus and the keyboard covers the form.
+                beforePick = { focusManager.clearFocus() },
+            )
             if (showMissing && draft.times.isEmpty()) {
                 Text(stringResource(R.string.review_missing), color = MaterialTheme.colorScheme.error)
             }

@@ -83,23 +83,41 @@ class SchedulingTest {
     }
 
     @Test fun dosesBeforeTheMedicineWasAddedAreNotDueThatDay() {
-        val m = med().copy(addedAt = today.atTime(16, 43))
+        val m = med().copy(scheduleSince = today.atTime(16, 43))
         assertFalse(m.isDueAt(today, "08:00"))
         assertTrue(m.isDueAt(today, "20:00"))
         assertTrue(m.isDueAt(today.plusDays(1), "08:00"))
     }
 
-    @Test fun addedAtTheExactMinuteStillCounts() {
-        assertTrue(med().copy(addedAt = today.atTime(8, 0, 30)).isDueAt(today, "08:00"))
+    @Test fun scheduleStartingThisMinuteStillCounts() {
+        assertTrue(med().copy(scheduleSince = today.atTime(8, 0, 30)).isDueAt(today, "08:00"))
     }
 
     @Test fun todayHidesSlotsThatPassedBeforeAdding() {
-        val m = med().copy(addedAt = today.atTime(16, 43))
+        val m = med().copy(scheduleSince = today.atTime(16, 43))
         val slots = HomeViewModel.todaySlots(listOf(m), emptyList(), today, LocalTime.of(16, 45))
         assertEquals(listOf("20:00"), slots.map { it.time })
     }
 
-    @Test fun medicinesWithoutAddedAtKeepOldBehavior() {
+    @Test fun medicinesWithoutScheduleSinceKeepOldBehavior() {
         assertTrue(med().isDueAt(today, "08:00"))
+    }
+
+    @Test fun editedTimeEarlierThanNowIsNotPendingToday() {
+        // At 16:00 the 20:00 dose is moved to 09:00: no alarm rang at 09:00 today.
+        val edited = med(times = listOf("09:00")).copy(scheduleSince = today.atTime(16, 0))
+        val slots = HomeViewModel.todaySlots(listOf(edited), emptyList(), today, LocalTime.of(16, 1))
+        assertTrue(slots.isEmpty())
+        assertTrue(edited.isDueAt(today.plusDays(1), "09:00"))
+    }
+
+    @Test fun dosesLoggedBeforeAnEditStayInTodaysHistory() {
+        // 08:00 was taken, then the times were changed to 09:00 and 21:00.
+        val edited = med(times = listOf("09:00", "21:00")).copy(scheduleSince = today.atTime(12, 0))
+        val logs = listOf(DoseLog(1, 1, today, "08:00", DoseStatus.TAKEN))
+        val slots = HomeViewModel.todaySlots(listOf(edited), logs, today, LocalTime.of(12, 5))
+        assertEquals(listOf("08:00", "21:00"), slots.map { it.time })
+        assertEquals(SlotStatus.TAKEN, slots[0].status)
+        assertEquals(SlotStatus.UPCOMING, slots[1].status)
     }
 }
