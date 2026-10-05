@@ -55,10 +55,21 @@ class PillReminderApp : Application() {
             enableVibration(false)
             lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         }
-        getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
+        // Same notification while the alarm screen is already showing: no heads-up covering it.
+        val quiet = NotificationChannel(
+            ALARM_QUIET_CHANNEL_ID,
+            res.getString(R.string.channel_alarms_active),
+            NotificationManager.IMPORTANCE_LOW,
+        ).apply {
+            setSound(null, null as AudioAttributes?)
+            enableVibration(false)
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        }
+        getSystemService(NotificationManager::class.java).createNotificationChannels(listOf(channel, quiet))
     }
 
     companion object {
         const val ALARM_CHANNEL_ID = "dose_alarms"
+        const val ALARM_QUIET_CHANNEL_ID = "dose_alarms_on_screen"
     }
 }

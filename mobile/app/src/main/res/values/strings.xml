@@ -3,27 +3,24 @@
     <string name="app_name">Mis Medicinas</string>
 
     <string name="channel_alarms">Alarmas de medicinas</string>
+    <string name="channel_alarms_active">Alarma en pantalla</string>
     <string name="channel_alarms_description">Suena a la hora de cada toma</string>
 
     <!-- Alarm -->
     <string name="alarm_title">Es hora de tu medicina</string>
     <string name="alarm_title_plural">Es hora de tus medicinas</string>
     <string name="alarm_test_text">Prueba de alarma</string>
-    <string name="alarm_confirmed">¡Muy bien!</string>
 
     <!-- Home -->
     <string name="home_today">Hoy</string>
     <string name="home_no_doses_today">No hay tomas programadas para hoy.</string>
-    <string name="home_medicines">Medicinas</string>
     <string name="home_empty">Todavía no hay medicinas. Pide a un familiar que agregue la receta.</string>
     <string name="home_add_prescription">Agregar receta</string>
     <string name="home_test_alarm">Probar alarma</string>
     <string name="home_disclaimer">Esta app solo repite lo que dice la receta. No da consejos médicos. Ante cualquier duda, consulta a tu médico o farmacéutico.</string>
     <string name="status_taken">Tomada</string>
     <string name="status_missed">No confirmada</string>
-    <string name="status_pending">Pendiente</string>
     <string name="status_upcoming">Más tarde</string>
-    <string name="med_times">Horas: %1$s</string>
     <string name="med_until">Hasta el %1$s</string>
     <string name="delete">Eliminar</string>
     <string name="cancel">Cancelar</string>
@@ -38,9 +35,8 @@
 
     <!-- Add prescription -->
     <string name="add_title">Agregar receta</string>
-    <string name="add_intro">Toma una foto clara de la receta, con buena luz y sin cortar el papel. Luego revisarás todo antes de guardar.</string>
     <string name="add_take_photo">Tomar foto</string>
-    <string name="add_pick_photo">Elegir de la galería</string>
+    <string name="add_pick_photo">De la galería</string>
     <string name="add_manual">Escribir a mano</string>
     <string name="add_processing">Leyendo la receta…</string>
     <string name="add_processing_hint">Esto puede tardar hasta un minuto.</string>
@@ -56,7 +52,7 @@
     <string name="review_add_time">Agregar hora</string>
     <string name="review_duration">Días de tratamiento (vacío = sin fin)</string>
     <string name="review_instructions">Indicaciones de la receta</string>
-    <string name="review_check">Revisar</string>
+    <string name="review_check">Revisar:</string>
     <string name="review_times_suggested">La receta indica una frecuencia, no horas exactas. Ajusta las horas a la rutina de la persona.</string>
     <string name="review_add_medicine">Agregar otra medicina</string>
     <string name="review_remove_medicine">Quitar esta medicina</string>
@@ -77,7 +73,6 @@
     <string name="edit_times_title">Horas de %1$s</string>
     <string name="edit_times_hint">Toca una hora para cambiarla.</string>
     <string name="times_need_one">Agrega al menos una hora. Para dejar de tomar esta medicina, elimínala.</string>
-    <string name="change_time">Cambiar %1$s</string>
     <string name="remove_time">Quitar %1$s</string>
     <string name="save">Guardar</string>
 
@@ -100,4 +95,33 @@
     <string name="search_medicines">Buscar medicina</string>
     <string name="search_no_results">Ninguna medicina coincide con «%1$s».</string>
     <string name="clear_search">Borrar búsqueda</string>
+
+    <!-- Redesign -->
+    <string name="greeting_morning">Buenos días</string>
+    <string name="greeting_afternoon">Buenas tardes</string>
+    <string name="greeting_evening">Buenas noches</string>
+    <string name="now_at">Ahora · %1$s</string>
+    <string name="read_aloud">Leer en voz alta</string>
+    <string name="say_again">Escuchar otra vez</string>
+    <string name="status_now">Ahora</string>
+    <string name="all_medicines">Todas mis medicinas</string>
+    <string name="medicines_title">Mis medicinas</string>
+    <string name="for_family">Para la familia</string>
+    <string name="family_prescription">Receta</string>
+    <string name="done_title">¡Muy bien!</string>
+    <string name="done_taken_at">Registrado a las %2$s: %1$s.</string>
+    <string name="done_next">Próxima toma</string>
+    <string name="done_button">Listo</string>
+    <string name="day_today">Hoy, %1$s</string>
+    <string name="day_tomorrow">Mañana, %1$s</string>
+    <string name="day_on">%1$s, %2$s</string>
+    <string name="step_photo">Paso 1 de 3 · Foto</string>
+    <string name="step_reading">Paso 2 de 3 · Lectura</string>
+    <string name="step_check">Paso 3 de 3 · Revisión</string>
+    <string name="tip_light">Buena luz, sin sombras</string>
+    <string name="tip_frame">Toda la hoja dentro del marco</string>
+    <string name="tip_check">Revisarás todo antes de guardar</string>
+    <string name="reading_footer">Después compararás cada dato con el papel antes de activar cualquier alarma.</string>
+    <string name="review_low_confidence">parte de esta medicina era difícil de leer. Compárala con el papel.</string>
+    <string name="delete_named">Eliminar %1$s</string>
 </resources>

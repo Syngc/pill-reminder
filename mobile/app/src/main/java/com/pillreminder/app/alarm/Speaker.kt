@@ -13,7 +13,12 @@ import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 /** Text-to-speech in the app language on the alarm audio stream, with suspend-until-done speaking. */
-class Speaker(context: Context, private val language: AppLanguage) : TextToSpeech.OnInitListener {
+class Speaker(
+    context: Context,
+    private val language: AppLanguage,
+    /** Alarm volume for alarms; [AudioAttributes.USAGE_MEDIA] for "read it out loud" in the app. */
+    private val usage: Int = AudioAttributes.USAGE_ALARM,
+) : TextToSpeech.OnInitListener {
     private val ready = CompletableDeferred<Boolean>()
     private val inFlight = ConcurrentHashMap<String, CompletableDeferred<Unit>>()
     private val tts = TextToSpeech(context.applicationContext, this)
@@ -34,7 +39,7 @@ class Speaker(context: Context, private val language: AppLanguage) : TextToSpeec
         tts.setSpeechRate(0.85f)
         tts.setAudioAttributes(
             AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setUsage(usage)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                 .build()
         )

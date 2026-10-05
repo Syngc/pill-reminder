@@ -48,6 +48,14 @@ On a physical phone, use your machine's LAN IP or a deployed HTTPS URL. Cleartex
 
 Alarm behavior: rings for up to 3 minutes. If nobody confirms, it rings again after 10 minutes, up to 3 attempts, and then the dose is logged as *No confirmada*.
 
+## Design
+
+The UI follows the "MedRing Redesign" canvas from Claude Design: a blue palette with a matching dark mode, text no smaller than 18sp, one main action per screen, and every status shown as icon + word + color ("Taken", "Now", "Later", "Not confirmed"). Colors and type live in `ui/theme/Theme.kt`, shared pieces (buttons, badges, chips, banners, icons) in `ui/components/`.
+
+The typeface is **Atkinson Hyperlegible Next**, designed for readers with low vision, bundled as `res/font/atkinson_hyperlegible_next.ttf` under the SIL Open Font License (`licenses/AtkinsonHyperlegibleNext-OFL.txt`).
+
+Home shows the dose due **now** (a ringing dose, or one whose time passed less than an hour ago) with **I took it** and **Read it out loud**; confirming there also stops a ringing alarm and cancels its retries. The alarm screen has **Say it again**, which cuts the tone short and repeats the spoken message.
+
 ## Languages
 
 The person picks Español or English with the language button on the home screen. The choice is saved in the app's own settings, separate from the phone's language, so the alarm service knows which language to use even when it starts with no screen open.

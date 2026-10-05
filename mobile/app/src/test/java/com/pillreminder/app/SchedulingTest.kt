@@ -77,9 +77,21 @@ class SchedulingTest {
         assertEquals(SlotStatus.MISSED, slots[0].status)
     }
 
-    @Test fun pastSlotWithoutLogIsPending() {
+    @Test fun slotJustPassedWithoutAnswerIsNow() {
+        val slots = HomeViewModel.todaySlots(listOf(med()), emptyList(), today, LocalTime.of(8, 30))
+        assertEquals(SlotStatus.NOW, slots[0].status)
+    }
+
+    @Test fun slotLongPastWithoutAnswerIsNotConfirmed() {
         val slots = HomeViewModel.todaySlots(listOf(med()), emptyList(), today, LocalTime.of(12, 0))
-        assertEquals(SlotStatus.PENDING, slots[0].status)
+        assertEquals(SlotStatus.MISSED, slots[0].status)
+    }
+
+    @Test fun ringingOrRetryingSlotIsNowEvenAfterAnHour() {
+        // The alarm's retries keep a pending log; it stays "now" until answered or given up.
+        val logs = listOf(DoseLog(1, 1, today, "08:00", DoseStatus.PENDING))
+        val slots = HomeViewModel.todaySlots(listOf(med()), logs, today, LocalTime.of(9, 15))
+        assertEquals(SlotStatus.NOW, slots[0].status)
     }
 
     @Test fun dosesBeforeTheMedicineWasAddedAreNotDueThatDay() {

@@ -31,7 +31,8 @@ data class DraftMedication(
     val times: List<String> = emptyList(),
     val durationDays: String = "",
     val instructions: String = "",
-    val needsCheck: Boolean = false,
+    /** The AI wasn't sure it read this medicine correctly. */
+    val lowConfidence: Boolean = false,
     val notes: String = "",
     val timesSuggested: Boolean = false,
 ) {
@@ -136,7 +137,7 @@ class AddPrescriptionViewModel(private val app: PillReminderApp) : ViewModel() {
         times = times.filter { TIME_PATTERN.matches(it) }.distinct().sorted(),
         durationDays = durationDays?.toString().orEmpty(),
         instructions = instructions,
-        needsCheck = confidence != "high" || notesForReviewer.isNotBlank(),
+        lowConfidence = confidence != "high",
         notes = notesForReviewer,
         timesSuggested = timesAreSuggested,
     )

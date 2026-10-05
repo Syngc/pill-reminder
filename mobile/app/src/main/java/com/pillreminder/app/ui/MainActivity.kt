@@ -3,6 +3,7 @@ package com.pillreminder.app.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,6 +15,7 @@ import com.pillreminder.app.PillReminderApp
 import com.pillreminder.app.alarm.AlarmService
 import com.pillreminder.app.ui.add.AddPrescriptionScreen
 import com.pillreminder.app.ui.home.HomeScreen
+import com.pillreminder.app.ui.medicines.MedicinesScreen
 import com.pillreminder.app.ui.theme.PillReminderTheme
 
 class MainActivity : LocalizedActivity() {
@@ -21,7 +23,11 @@ class MainActivity : LocalizedActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // Transparent bars in both modes, with icons that follow the system light/dark setting.
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.auto(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT),
+        )
         setContent {
             PillReminderTheme {
                 // While the app is open, show the big alarm screen directly instead of a heads-up notification.
@@ -37,10 +43,17 @@ class MainActivity : LocalizedActivity() {
                         HomeScreen(
                             language = app.language,
                             onAddPrescription = { nav.navigate("add") },
+                            onOpenMedicines = { nav.navigate("medicines") },
                             onChangeLanguage = { language ->
                                 app.setLanguage(language)
                                 recreate()
                             },
+                        )
+                    }
+                    composable("medicines") {
+                        MedicinesScreen(
+                            onBack = { nav.popBackStack() },
+                            onAddPrescription = { nav.navigate("add") },
                         )
                     }
                     composable("add") {

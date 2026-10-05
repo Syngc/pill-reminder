@@ -1,21 +1,27 @@
 package com.pillreminder.app.ui.home
 
+import android.media.AudioAttributes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.pillreminder.app.PillReminderApp
+import com.pillreminder.app.alarm.AlarmScheduler
+import com.pillreminder.app.alarm.AlarmService
+import com.pillreminder.app.alarm.DoseMessage
+import com.pillreminder.app.alarm.Speaker
 import com.pillreminder.app.data.DoseLog
 import com.pillreminder.app.data.DoseStatus
 import com.pillreminder.app.data.Medication
-import com.pillreminder.app.data.MedicationRepository
-import com.pillreminder.app.alarm.AlarmScheduler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -24,12 +30,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.Normalizer
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.Locale
 
-enum class SlotStatus { TAKEN, MISSED, PENDING, UPCOMING }
+/** How a dose looks on the home screen: always shown as icon + word + color. */
+enum class SlotStatus { TAKEN, NOW, MISSED, UPCOMING }
 
 data class TodaySlot(val time: String, val medications: List<Medication>, val status: SlotStatus)
 
@@ -39,14 +47,23 @@ data class HomeState(
     val medications: List<Medication> = emptyList(),
     /** Next scheduled dose per medicine id; missing when the treatment has ended. */
     val nextDoses: Map<Long, LocalDateTime> = emptyMap(),
-)
+) {
+    /** The dose to take right now, shown in the big card at the top. */
+    val nowSlot: TodaySlot? get() = today.firstOrNull { it.status == SlotStatus.NOW }
+
+    /** The next alarm across all medicines. */
+    val nextDose: LocalDateTime? get() = nextDoses.values.minOrNull()
+}
+
+/** Shown on the "Well done" screen after a dose is confirmed from the home screen. */
+data class Confirmation(val medications: List<Medication>, val at: LocalDateTime)
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class HomeViewModel(
-    private val repository: MedicationRepository,
-    private val scheduler: AlarmScheduler,
-) : ViewModel() {
-    // Ticks so statuses move from "later" to "pending" and the day rolls over at midnight
+class HomeViewModel(private val app: PillReminderApp) : ViewModel() {
+    private val repository = app.repository
+    private val scheduler = app.scheduler
+
+    // Ticks so statuses move from "later" to "now" and the day rolls over at midnight
     // while the screen stays open.
     private val clock = flow {
         while (true) {
@@ -68,6 +85,38 @@ class HomeViewModel(
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeState())
 
+    private val _confirmation = MutableStateFlow<Confirmation?>(null)
+    val confirmation: StateFlow<Confirmation?> = _confirmation.asStateFlow()
+
+    // Normal media volume: the person is looking at the screen, unlike when an alarm rings.
+    private val speaker by lazy { Speaker(app, app.language, AudioAttributes.USAGE_MEDIA) }
+    private var reading: Job? = null
+
+    /** "I took it" on the home screen's "Now" card. */
+    fun confirm(slot: TodaySlot) {
+        val date = state.value.now.toLocalDate()
+        val ringing = AlarmService.current.value
+        if (ringing != null && !ringing.isTest && ringing.date == date && ringing.time == slot.time) {
+            // The alarm for this dose is ringing: let it stop, log and say "well done".
+            app.startService(AlarmService.takenIntent(app))
+        } else {
+            viewModelScope.launch {
+                repository.confirmTaken(date, slot.time, slot.medications)
+                scheduler.cancelRetry(slot.time)
+            }
+        }
+        _confirmation.value = Confirmation(slot.medications, LocalDateTime.now())
+    }
+
+    fun dismissConfirmation() {
+        _confirmation.value = null
+    }
+
+    fun readAloud(slot: TodaySlot) {
+        reading?.cancel()
+        reading = viewModelScope.launch { speaker.speak(DoseMessage.spoken(slot.medications, app.language)) }
+    }
+
     fun updateTimes(medication: Medication, times: List<String>) {
         viewModelScope.launch {
             repository.updateTimes(medication.id, times)
@@ -82,14 +131,19 @@ class HomeViewModel(
         }
     }
 
+    override fun onCleared() {
+        reading?.cancel()
+        speaker.shutdown()
+    }
+
     companion object {
         private const val CLOCK_TICK_MILLIS = 30_000L
 
+        /** A dose whose time passed this long ago without an answer is shown as not confirmed. */
+        private val NOW_WINDOW: Duration = Duration.ofMinutes(60)
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val app = this[APPLICATION_KEY] as PillReminderApp
-                HomeViewModel(app.repository, app.scheduler)
-            }
+            initializer { HomeViewModel(this[APPLICATION_KEY] as PillReminderApp) }
         }
 
         /**
@@ -125,15 +179,18 @@ class HomeViewModel(
                     med.isDueAt(date, time) || logs.any { it.medicationId == med.id && it.time == time }
                 }
                 if (due.isEmpty()) return@mapNotNull null
-                val slotLogs = logs.filter { it.time == time }
-                val status = when {
-                    slotLogs.isNotEmpty() && slotLogs.all { it.status == DoseStatus.TAKEN } -> SlotStatus.TAKEN
-                    slotLogs.any { it.status == DoseStatus.MISSED } -> SlotStatus.MISSED
-                    slotLogs.isNotEmpty() || !LocalTime.parse(time).isAfter(now) -> SlotStatus.PENDING
-                    else -> SlotStatus.UPCOMING
-                }
-                TodaySlot(time, due, status)
+                TodaySlot(time, due, statusOf(LocalTime.parse(time), logs.filter { it.time == time }, now))
             }
+        }
+
+        private fun statusOf(time: LocalTime, slotLogs: List<DoseLog>, now: LocalTime): SlotStatus = when {
+            slotLogs.isNotEmpty() && slotLogs.all { it.status == DoseStatus.TAKEN } -> SlotStatus.TAKEN
+            slotLogs.any { it.status == DoseStatus.MISSED } -> SlotStatus.MISSED
+            // Ringing, or waiting for one of the alarm's retries.
+            slotLogs.any { it.status == DoseStatus.PENDING } -> SlotStatus.NOW
+            time.isAfter(now) -> SlotStatus.UPCOMING
+            Duration.between(time, now) < NOW_WINDOW -> SlotStatus.NOW
+            else -> SlotStatus.MISSED
         }
     }
 }

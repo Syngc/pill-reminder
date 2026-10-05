@@ -29,6 +29,12 @@ class MedicationRepository(private val db: AppDatabase) {
             due.map { DoseLog(medicationId = it.id, date = date, time = time, status = DoseStatus.PENDING) }
         )
 
+    /** Records a dose as taken even if its alarm never rang (for example, confirmed from the home screen). */
+    suspend fun confirmTaken(date: LocalDate, time: String, due: List<Medication>) {
+        markRinging(date, time, due)
+        markTaken(date, time)
+    }
+
     suspend fun markTaken(date: LocalDate, time: String) =
         doseLogs.resolvePending(date, time, DoseStatus.TAKEN, System.currentTimeMillis())
 

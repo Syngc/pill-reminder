@@ -3,27 +3,24 @@
     <string name="app_name">My Medicines</string>
 
     <string name="channel_alarms">Medicine alarms</string>
+    <string name="channel_alarms_active">Alarm on screen</string>
     <string name="channel_alarms_description">Rings at the time of each dose</string>
 
     <!-- Alarm -->
     <string name="alarm_title">Time for your medicine</string>
     <string name="alarm_title_plural">Time for your medicines</string>
     <string name="alarm_test_text">Alarm test</string>
-    <string name="alarm_confirmed">Well done!</string>
 
     <!-- Home -->
     <string name="home_today">Today</string>
     <string name="home_no_doses_today">No doses scheduled for today.</string>
-    <string name="home_medicines">Medicines</string>
     <string name="home_empty">No medicines yet. Ask a family member to add the prescription.</string>
     <string name="home_add_prescription">Add prescription</string>
     <string name="home_test_alarm">Test alarm</string>
     <string name="home_disclaimer">This app only repeats what the prescription says. It does not give medical advice. If you have any questions, ask your doctor or pharmacist.</string>
     <string name="status_taken">Taken</string>
     <string name="status_missed">Not confirmed</string>
-    <string name="status_pending">Pending</string>
     <string name="status_upcoming">Later</string>
-    <string name="med_times">Times: %1$s</string>
     <string name="med_until">Until %1$s</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
@@ -38,9 +35,8 @@
 
     <!-- Add prescription -->
     <string name="add_title">Add prescription</string>
-    <string name="add_intro">Take a clear photo of the prescription, in good light and without cutting off the paper. You will check everything before saving.</string>
     <string name="add_take_photo">Take photo</string>
-    <string name="add_pick_photo">Choose from gallery</string>
+    <string name="add_pick_photo">From gallery</string>
     <string name="add_manual">Type it in</string>
     <string name="add_processing">Reading the prescription…</string>
     <string name="add_processing_hint">This can take up to a minute.</string>
@@ -56,7 +52,7 @@
     <string name="review_add_time">Add time</string>
     <string name="review_duration">Days of treatment (empty = no end)</string>
     <string name="review_instructions">Instructions from the prescription</string>
-    <string name="review_check">Check</string>
+    <string name="review_check">Check:</string>
     <string name="review_times_suggested">The prescription gives a frequency, not exact times. Adjust the times to the person\'s routine.</string>
     <string name="review_add_medicine">Add another medicine</string>
     <string name="review_remove_medicine">Remove this medicine</string>
@@ -77,7 +73,6 @@
     <string name="edit_times_title">Times for %1$s</string>
     <string name="edit_times_hint">Tap a time to change it.</string>
     <string name="times_need_one">Add at least one time. To stop taking this medicine, delete it.</string>
-    <string name="change_time">Change %1$s</string>
     <string name="remove_time">Remove %1$s</string>
     <string name="save">Save</string>
 
@@ -99,4 +94,33 @@
     <string name="search_medicines">Search medicines</string>
     <string name="search_no_results">No medicines match “%1$s”.</string>
     <string name="clear_search">Clear search</string>
+
+    <!-- Redesign -->
+    <string name="greeting_morning">Good morning</string>
+    <string name="greeting_afternoon">Good afternoon</string>
+    <string name="greeting_evening">Good evening</string>
+    <string name="now_at">Now · %1$s</string>
+    <string name="read_aloud">Read it out loud</string>
+    <string name="say_again">Say it again</string>
+    <string name="status_now">Now</string>
+    <string name="all_medicines">All my medicines</string>
+    <string name="medicines_title">My medicines</string>
+    <string name="for_family">For family</string>
+    <string name="family_prescription">Prescription</string>
+    <string name="done_title">Well done!</string>
+    <string name="done_taken_at">%1$s taken at %2$s.</string>
+    <string name="done_next">Next dose</string>
+    <string name="done_button">Done</string>
+    <string name="day_today">Today, %1$s</string>
+    <string name="day_tomorrow">Tomorrow, %1$s</string>
+    <string name="day_on">%1$s, %2$s</string>
+    <string name="step_photo">Step 1 of 3 · Photo</string>
+    <string name="step_reading">Step 2 of 3 · Reading</string>
+    <string name="step_check">Step 3 of 3 · Check</string>
+    <string name="tip_light">Good light, no shadows</string>
+    <string name="tip_frame">The whole paper inside the frame</string>
+    <string name="tip_check">You will check everything before saving</string>
+    <string name="reading_footer">Next, you will compare every detail with the paper before any alarm is turned on.</string>
+    <string name="review_low_confidence">part of this medicine was hard to read. Compare it with the paper.</string>
+    <string name="delete_named">Delete %1$s</string>
 </resources>

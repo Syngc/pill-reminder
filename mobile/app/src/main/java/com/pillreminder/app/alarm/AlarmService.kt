@@ -24,8 +24,8 @@ import com.pillreminder.app.data.AppLanguage
 import com.pillreminder.app.data.Medication
 import com.pillreminder.app.ui.AlarmActivity
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,6 +55,8 @@ class AlarmService : LifecycleService() {
     private var player: MediaPlayer? = null
     private var wakeLock: PowerManager.WakeLock? = null
     private var ringing: Job? = null
+    /** "Say it again" taps: cut the tone short and speak right away. */
+    private val sayAgain = Channel<Unit>(Channel.CONFLATED)
 
     override fun onCreate() {
         super.onCreate()
@@ -65,6 +67,10 @@ class AlarmService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
+        if (intent?.action == ACTION_SAY_AGAIN) {
+            sayAgain.trySend(Unit)
+            return START_NOT_STICKY
+        }
         if (intent?.action == ACTION_SCREEN_SHOWN) {
             // The alarm screen is up; re-post without the full-screen intent so the heads-up stops covering it.
             _current.value?.let { NotificationManagerCompat.from(this).notifyIfAllowed(alarmNotification(it, fullScreen = false)) }
@@ -122,10 +128,12 @@ class AlarmService : LifecycleService() {
         acquireWakeLock()
         startVibrating()
         val result = withTimeoutOrNull(RING_DURATION_MILLIS) {
+            var speakNow = false
             while (true) {
-                playTone(TONE_MILLIS)
+                if (!speakNow) playTone(TONE_MILLIS)
                 speaker.speak(message)
-                delay(PAUSE_MILLIS)
+                sayAgain.tryReceive() // a tap while it was already speaking needs no repeat
+                speakNow = withTimeoutOrNull(PAUSE_MILLIS) { sayAgain.receive() } != null
             }
         }
         silence()
@@ -149,11 +157,16 @@ class AlarmService : LifecycleService() {
         }
     }
 
+    /** Plays the alarm tone for [millis], or until "say it again" is tapped. */
     private suspend fun playTone(millis: Long) {
-        val mp = player ?: createPlayer()?.also { player = it } ?: return delay(millis)
+        val mp = player ?: createPlayer()?.also { player = it }
+        if (mp == null) {
+            withTimeoutOrNull(millis) { sayAgain.receive() }
+            return
+        }
         mp.start()
         try {
-            delay(millis)
+            withTimeoutOrNull(millis) { sayAgain.receive() }
         } finally {
             if (mp.isPlaying) mp.pause()
         }
@@ -257,7 +270,8 @@ class AlarmService : LifecycleService() {
             dose.medications.joinToString(", ") { "${it.name} ${it.dose}" }
         }
         val title = if (dose.medications.size > 1) R.string.alarm_title_plural else R.string.alarm_title
-        return NotificationCompat.Builder(this, PillReminderApp.ALARM_CHANNEL_ID)
+        val channel = if (fullScreen) PillReminderApp.ALARM_CHANNEL_ID else PillReminderApp.ALARM_QUIET_CHANNEL_ID
+        return NotificationCompat.Builder(this, channel)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(res.getString(title))
             .setContentText(text)
@@ -285,6 +299,7 @@ class AlarmService : LifecycleService() {
         private const val ACTION_TEST = "com.pillreminder.app.service.TEST"
         private const val ACTION_TAKEN = "com.pillreminder.app.service.TAKEN"
         private const val ACTION_SCREEN_SHOWN = "com.pillreminder.app.service.SCREEN_SHOWN"
+        private const val ACTION_SAY_AGAIN = "com.pillreminder.app.service.SAY_AGAIN"
         private const val EXTRA_DATE = "date"
         private const val EXTRA_TIME = "time"
         private const val EXTRA_ATTEMPT = "attempt"
@@ -308,6 +323,9 @@ class AlarmService : LifecycleService() {
 
         fun testIntent(context: Context): Intent =
             Intent(context, AlarmService::class.java).setAction(ACTION_TEST)
+
+        fun sayAgainIntent(context: Context): Intent =
+            Intent(context, AlarmService::class.java).setAction(ACTION_SAY_AGAIN)
 
         fun screenShownIntent(context: Context): Intent =
             Intent(context, AlarmService::class.java).setAction(ACTION_SCREEN_SHOWN)

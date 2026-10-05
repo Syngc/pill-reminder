@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.PillReminder" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- The window color shows behind the system bars and while screens load; match the app background. -->
+    <style name="Theme.PillReminder" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/app_background</item>
+    </style>
 </resources>
