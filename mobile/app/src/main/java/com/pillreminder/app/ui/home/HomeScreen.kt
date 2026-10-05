@@ -69,7 +69,10 @@ import com.pillreminder.app.alarm.AlarmService
 import com.pillreminder.app.data.AppLanguage
 import com.pillreminder.app.data.Medication
 import com.pillreminder.app.ui.TimesEditor
+import com.pillreminder.app.ui.TimeFormatter
 import com.pillreminder.app.ui.rememberTimeFormatter
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -138,7 +141,13 @@ fun HomeScreen(
                 item { Text(stringResource(R.string.home_empty), style = MaterialTheme.typography.bodyLarge) }
             }
             items(state.medications, key = { "med-${it.id}" }) { med ->
-                MedicationCard(med, onEditTimes = { toEdit = med }, onDelete = { toDelete = med })
+                MedicationCard(
+                    med,
+                    nextDose = state.nextDoses[med.id],
+                    today = state.now.toLocalDate(),
+                    onEditTimes = { toEdit = med },
+                    onDelete = { toDelete = med },
+                )
             }
 
             item {
@@ -258,9 +267,16 @@ private fun StatusChip(text: String, icon: ImageVector) {
 }
 
 @Composable
-private fun MedicationCard(med: Medication, onEditTimes: () -> Unit, onDelete: () -> Unit) {
+private fun MedicationCard(
+    med: Medication,
+    nextDose: LocalDateTime?,
+    today: LocalDate,
+    onEditTimes: () -> Unit,
+    onDelete: () -> Unit,
+) {
     val locale = LocalConfiguration.current.locales[0]
     val dateFormat = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(locale) }
+    val timeFormat = rememberTimeFormatter()
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(verticalAlignment = Alignment.Top) {
@@ -270,10 +286,15 @@ private fun MedicationCard(med: Medication, onEditTimes: () -> Unit, onDelete: (
                 }
             }
             Text(med.dose, style = MaterialTheme.typography.bodyLarge)
-            val timeFormat = rememberTimeFormatter()
             Text(
                 stringResource(R.string.med_times, med.times.joinToString("  ·  ") { timeFormat.format(it) }),
                 style = MaterialTheme.typography.bodyLarge,
+            )
+            // Spelling out the day makes a wrong AM/PM or time obvious at a glance.
+            Text(
+                nextDoseText(nextDose, today, timeFormat, dateFormat),
+                style = MaterialTheme.typography.titleMedium,
+                color = if (nextDose != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
             )
             if (med.instructions.isNotBlank()) Text(med.instructions, style = MaterialTheme.typography.bodyMedium)
             med.durationDays?.let { days ->
@@ -286,6 +307,17 @@ private fun MedicationCard(med: Medication, onEditTimes: () -> Unit, onDelete: (
                 Text(stringResource(R.string.edit_times))
             }
         }
+    }
+}
+
+@Composable
+private fun nextDoseText(next: LocalDateTime?, today: LocalDate, timeFormat: TimeFormatter, dateFormat: DateTimeFormatter): String {
+    if (next == null) return stringResource(R.string.next_dose_none)
+    val time = timeFormat.format(next.toLocalTime())
+    return when (next.toLocalDate()) {
+        today -> stringResource(R.string.next_dose_today, time)
+        today.plusDays(1) -> stringResource(R.string.next_dose_tomorrow, time)
+        else -> stringResource(R.string.next_dose_on, next.toLocalDate().format(dateFormat), time)
     }
 }
 

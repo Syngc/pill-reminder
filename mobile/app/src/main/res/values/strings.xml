@@ -89,4 +89,10 @@
         <item quantity="other">%d horas</item>
     </plurals>
     <string name="interval_hours_minutes">%1$d h %2$d min</string>
+
+    <!-- Next dose -->
+    <string name="next_dose_today">Próxima toma: hoy, %1$s</string>
+    <string name="next_dose_tomorrow">Próxima toma: mañana, %1$s</string>
+    <string name="next_dose_on">Próxima toma: %1$s, %2$s</string>
+    <string name="next_dose_none">Sin más tomas: el tratamiento terminó.</string>
 </resources>

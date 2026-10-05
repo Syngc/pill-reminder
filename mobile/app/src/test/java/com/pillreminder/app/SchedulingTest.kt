@@ -120,4 +120,24 @@ class SchedulingTest {
         assertEquals(SlotStatus.TAKEN, slots[0].status)
         assertEquals(SlotStatus.UPCOMING, slots[1].status)
     }
+
+    @Test fun nextDoseIsTheEarliestUpcomingTime() {
+        assertEquals(today.atTime(20, 0), HomeViewModel.nextDose(med(), today.atTime(17, 48)))
+        assertEquals(today.atTime(8, 0), HomeViewModel.nextDose(med(), today.atTime(7, 0)))
+    }
+
+    @Test fun nextDoseRollsToTomorrowAfterTheLastTime() {
+        // The reported case: 05:39 was set at 17:39, so the next dose is tomorrow morning.
+        val m = med(times = listOf("05:39", "20:00"))
+        assertEquals(today.atTime(20, 0), HomeViewModel.nextDose(m, today.atTime(17, 48)))
+        assertEquals(today.plusDays(1).atTime(5, 39), HomeViewModel.nextDose(m, today.atTime(20, 30)))
+    }
+
+    @Test fun nextDoseWaitsForAFutureStart() {
+        assertEquals(today.plusDays(2).atTime(8, 0), HomeViewModel.nextDose(med(start = today.plusDays(2)), today.atTime(9, 0)))
+    }
+
+    @Test fun noNextDoseAfterTheTreatmentEnds() {
+        assertNull(HomeViewModel.nextDose(med(days = 1), today.atTime(21, 0)))
+    }
 }

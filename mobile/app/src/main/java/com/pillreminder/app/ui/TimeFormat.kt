@@ -17,7 +17,9 @@ import java.util.Locale
 class TimeFormatter(locale: Locale, is24Hour: Boolean) {
     private val formatter = DateTimeFormatter.ofPattern(if (is24Hour) "HH:mm" else "h:mm a", locale)
 
-    fun format(time: String): String = LocalTime.parse(time).format(formatter)
+    fun format(time: String): String = format(LocalTime.parse(time))
+
+    fun format(time: LocalTime): String = time.format(formatter)
 }
 
 @Composable

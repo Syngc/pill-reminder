@@ -12,12 +12,19 @@ import com.pillreminder.app.data.DoseStatus
 import com.pillreminder.app.data.Medication
 import com.pillreminder.app.data.MedicationRepository
 import com.pillreminder.app.alarm.AlarmScheduler
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 enum class SlotStatus { TAKEN, MISSED, PENDING, UPCOMING }
@@ -25,19 +32,38 @@ enum class SlotStatus { TAKEN, MISSED, PENDING, UPCOMING }
 data class TodaySlot(val time: String, val medications: List<Medication>, val status: SlotStatus)
 
 data class HomeState(
+    val now: LocalDateTime = LocalDateTime.now(),
     val today: List<TodaySlot> = emptyList(),
     val medications: List<Medication> = emptyList(),
+    /** Next scheduled dose per medicine id; missing when the treatment has ended. */
+    val nextDoses: Map<Long, LocalDateTime> = emptyMap(),
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
     private val repository: MedicationRepository,
     private val scheduler: AlarmScheduler,
 ) : ViewModel() {
-    private val date = LocalDate.now()
+    // Ticks so statuses move from "later" to "pending" and the day rolls over at midnight
+    // while the screen stays open.
+    private val clock = flow {
+        while (true) {
+            emit(LocalDateTime.now())
+            delay(CLOCK_TICK_MILLIS)
+        }
+    }
+
+    private val todaysLogs = clock.map { it.toLocalDate() }.distinctUntilChanged()
+        .flatMapLatest { repository.observeDoseLogs(it) }
 
     val state: StateFlow<HomeState> =
-        combine(repository.observeMedications(), repository.observeDoseLogs(date)) { meds, logs ->
-            HomeState(today = todaySlots(meds, logs, date, LocalTime.now()), medications = meds)
+        combine(clock, repository.observeMedications(), todaysLogs) { now, meds, logs ->
+            HomeState(
+                now = now,
+                today = todaySlots(meds, logs, now.toLocalDate(), now.toLocalTime()),
+                medications = meds,
+                nextDoses = meds.mapNotNull { med -> nextDose(med, now)?.let { med.id to it } }.toMap(),
+            )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeState())
 
     fun updateTimes(medication: Medication, times: List<String>) {
@@ -55,12 +81,18 @@ class HomeViewModel(
     }
 
     companion object {
+        private const val CLOCK_TICK_MILLIS = 30_000L
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val app = this[APPLICATION_KEY] as PillReminderApp
                 HomeViewModel(app.repository, app.scheduler)
             }
         }
+
+        /** When this medicine's alarm will next ring, or null when its treatment has ended. */
+        fun nextDose(medication: Medication, now: LocalDateTime): LocalDateTime? =
+            medication.times.mapNotNull { AlarmScheduler.nextOccurrence(listOf(medication), it, now) }.minOrNull()
 
         fun todaySlots(
             medications: List<Medication>,
