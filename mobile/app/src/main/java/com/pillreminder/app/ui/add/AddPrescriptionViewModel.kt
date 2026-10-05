@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicLong
 
 /** An editable medicine on the review screen. */
@@ -106,7 +106,7 @@ class AddPrescriptionViewModel(private val app: PillReminderApp) : ViewModel() {
         }
         if (!review.confirmed) return
         viewModelScope.launch {
-            val today = LocalDate.now()
+            val now = LocalDateTime.now()
             app.repository.add(
                 review.drafts.map {
                     Medication(
@@ -114,8 +114,9 @@ class AddPrescriptionViewModel(private val app: PillReminderApp) : ViewModel() {
                         dose = it.dose.trim(),
                         times = it.times.distinct().sorted(),
                         instructions = it.instructions.trim(),
-                        startDate = today,
+                        startDate = now.toLocalDate(),
                         durationDays = it.durationDays.toIntOrNull()?.takeIf { days -> days > 0 },
+                        addedAt = now,
                     )
                 }
             )

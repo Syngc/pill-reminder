@@ -11,13 +11,10 @@ class MedicationRepository(private val db: AppDatabase) {
 
     fun observeDoseLogs(date: LocalDate): Flow<List<DoseLog>> = doseLogs.observeForDate(date)
 
-    suspend fun activeOn(date: LocalDate): List<Medication> =
-        medications.getAll().filter { it.isActiveOn(date) }
-
     suspend fun all(): List<Medication> = medications.getAll()
 
     suspend fun dueAt(date: LocalDate, time: String): List<Medication> =
-        activeOn(date).filter { time in it.times }
+        medications.getAll().filter { it.isDueAt(date, time) }
 
     suspend fun add(newMedications: List<Medication>) = medications.insertAll(newMedications)
 

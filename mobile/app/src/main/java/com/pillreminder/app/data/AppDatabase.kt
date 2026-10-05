@@ -1,6 +1,7 @@
 package com.pillreminder.app.data
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Insert
@@ -12,12 +13,15 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class Converters {
     @TypeConverter fun fromTimes(times: List<String>): String = times.joinToString(",")
     @TypeConverter fun toTimes(value: String): List<String> = value.split(",").filter { it.isNotBlank() }
     @TypeConverter fun fromDate(date: LocalDate): Long = date.toEpochDay()
     @TypeConverter fun toDate(value: Long): LocalDate = LocalDate.ofEpochDay(value)
+    @TypeConverter fun fromDateTime(value: LocalDateTime?): String? = value?.toString()
+    @TypeConverter fun toDateTime(value: String?): LocalDateTime? = value?.let(LocalDateTime::parse)
     @TypeConverter fun fromStatus(status: DoseStatus): String = status.name
     @TypeConverter fun toStatus(value: String): DoseStatus = DoseStatus.valueOf(value)
 }
@@ -52,7 +56,11 @@ interface DoseLogDao {
     suspend fun resolvePending(date: LocalDate, time: String, status: DoseStatus, confirmedAt: Long?)
 }
 
-@Database(entities = [Medication::class, DoseLog::class], version = 1)
+@Database(
+    entities = [Medication::class, DoseLog::class],
+    version = 2,
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
+)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun medicationDao(): MedicationDao

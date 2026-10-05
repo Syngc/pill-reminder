@@ -5,6 +5,8 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Entity(tableName = "medications")
 data class Medication(
@@ -17,11 +19,23 @@ data class Medication(
     val startDate: LocalDate,
     /** Null means no end date was written on the prescription. */
     val durationDays: Int?,
+    /** When it was saved. Null for medicines saved before this was recorded. */
+    val addedAt: LocalDateTime? = null,
 ) {
     fun isActiveOn(date: LocalDate): Boolean {
         if (date.isBefore(startDate)) return false
         val days = durationDays ?: return true
         return date.isBefore(startDate.plusDays(days.toLong()))
+    }
+
+    /**
+     * Whether a dose at [time] on [date] is part of the schedule. Doses whose time had already
+     * passed when the medicine was added don't count, so they never show as pending.
+     */
+    fun isDueAt(date: LocalDate, time: String): Boolean {
+        if (time !in times || !isActiveOn(date)) return false
+        val added = addedAt ?: return true
+        return date != added.toLocalDate() || !LocalTime.parse(time).isBefore(added.toLocalTime().withSecond(0).withNano(0))
     }
 }
 

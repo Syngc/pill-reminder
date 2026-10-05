@@ -61,8 +61,9 @@ class HomeViewModel(
             date: LocalDate,
             now: LocalTime,
         ): List<TodaySlot> {
-            val active = medications.filter { it.isActiveOn(date) }
-            return active.flatMap { it.times }.distinct().sorted().map { time ->
+            return medications.flatMap { it.times }.distinct().sorted().mapNotNull { time ->
+                val due = medications.filter { it.isDueAt(date, time) }
+                if (due.isEmpty()) return@mapNotNull null
                 val slotLogs = logs.filter { it.time == time }
                 val status = when {
                     slotLogs.isNotEmpty() && slotLogs.all { it.status == DoseStatus.TAKEN } -> SlotStatus.TAKEN
@@ -70,7 +71,7 @@ class HomeViewModel(
                     slotLogs.isNotEmpty() || !LocalTime.parse(time).isAfter(now) -> SlotStatus.PENDING
                     else -> SlotStatus.UPCOMING
                 }
-                TodaySlot(time, active.filter { time in it.times }, status)
+                TodaySlot(time, due, status)
             }
         }
     }

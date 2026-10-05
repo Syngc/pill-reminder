@@ -11,12 +11,25 @@ Requires JDK 17+ (Android Studio's bundled JBR works) and the Android SDK.
 ./gradlew testDebugUnitTest   # unit tests
 ```
 
-Backend settings go in `mobile/local.properties` (not committed):
+Settings go in `mobile/local.properties` (git-ignored, never committed):
 
 ```properties
-backend.url=http://10.0.2.2:8000   # default; the emulator's alias for your machine
-backend.apiKey=                    # must match the backend's APP_API_KEY, if set
+backend.url=http://10.0.2.2:8000         # debug builds; the emulator's alias for your machine
+backend.releaseUrl=https://…run.app      # release builds; must be https
+backend.apiKey=…                         # must match the backend's APP_API_KEY
+release.storeFile=/Users/…/.android/pill-reminder-release.jks
+release.storePassword=…
+release.keyAlias=pill-reminder
+release.keyPassword=…
 ```
+
+### Release APK
+
+```bash
+./gradlew assembleRelease    # → app/build/outputs/apk/release/app-release.apk
+```
+
+The release build refuses to run without an `https://` backend URL and the signing key. **Back up the keystore file and its password together** (for example, in a password manager). Android installs an update only if it is signed with the same key, so losing the key means everyone has to uninstall and reinstall, losing their saved medicines. Bump `versionCode` in `app/build.gradle.kts` for every APK you hand out.
 
 On a physical phone, use your machine's LAN IP or a deployed HTTPS URL. Cleartext HTTP is only allowed to `10.0.2.2` and `localhost`; see `res/xml/network_security_config.xml`.
 

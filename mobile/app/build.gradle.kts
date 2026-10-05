@@ -8,11 +8,13 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-// Backend location and shared key come from mobile/local.properties (not committed).
+// Backend location, shared key and signing secrets come from mobile/local.properties (not committed).
 val localProps = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) file.inputStream().use { load(it) }
 }
+val releaseBackendUrl: String = localProps.getProperty("backend.releaseUrl", "")
+val releaseStoreFile: String? = localProps.getProperty("release.storeFile")
 
 android {
     namespace = "com.pillreminder.app"
@@ -22,8 +24,8 @@ android {
         applicationId = "com.pillreminder.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.1.1"
 
         buildConfigField(
             "String", "BACKEND_URL",
@@ -35,8 +37,21 @@ android {
         )
     }
 
+    signingConfigs {
+        create("release") {
+            if (releaseStoreFile != null) {
+                storeFile = file(releaseStoreFile)
+                storePassword = localProps.getProperty("release.storePassword")
+                keyAlias = localProps.getProperty("release.keyAlias")
+                keyPassword = localProps.getProperty("release.keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            buildConfigField("String", "BACKEND_URL", "\"$releaseBackendUrl\"")
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -57,6 +72,18 @@ android {
         // not just the one matching the phone's settings.
         language {
             enableSplit = false
+        }
+    }
+}
+
+// Checked only when a release build actually runs, so CI's debug builds don't need these settings.
+tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+    doFirst {
+        require(releaseBackendUrl.startsWith("https://")) {
+            "Set backend.releaseUrl=https://… in mobile/local.properties before building a release."
+        }
+        require(releaseStoreFile != null && file(releaseStoreFile).exists()) {
+            "Set release.storeFile (and its passwords) in mobile/local.properties before building a release."
         }
     }
 }

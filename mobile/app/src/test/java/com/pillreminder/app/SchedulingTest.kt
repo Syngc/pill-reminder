@@ -81,4 +81,25 @@ class SchedulingTest {
         val slots = HomeViewModel.todaySlots(listOf(med()), emptyList(), today, LocalTime.of(12, 0))
         assertEquals(SlotStatus.PENDING, slots[0].status)
     }
+
+    @Test fun dosesBeforeTheMedicineWasAddedAreNotDueThatDay() {
+        val m = med().copy(addedAt = today.atTime(16, 43))
+        assertFalse(m.isDueAt(today, "08:00"))
+        assertTrue(m.isDueAt(today, "20:00"))
+        assertTrue(m.isDueAt(today.plusDays(1), "08:00"))
+    }
+
+    @Test fun addedAtTheExactMinuteStillCounts() {
+        assertTrue(med().copy(addedAt = today.atTime(8, 0, 30)).isDueAt(today, "08:00"))
+    }
+
+    @Test fun todayHidesSlotsThatPassedBeforeAdding() {
+        val m = med().copy(addedAt = today.atTime(16, 43))
+        val slots = HomeViewModel.todaySlots(listOf(m), emptyList(), today, LocalTime.of(16, 45))
+        assertEquals(listOf("20:00"), slots.map { it.time })
+    }
+
+    @Test fun medicinesWithoutAddedAtKeepOldBehavior() {
+        assertTrue(med().isDueAt(today, "08:00"))
+    }
 }
