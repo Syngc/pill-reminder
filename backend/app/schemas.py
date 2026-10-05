@@ -6,7 +6,12 @@ from pydantic import BaseModel, Field
 
 
 class Medication(BaseModel):
-    name: str = Field(description="Medicine name exactly as written on the prescription.")
+    name: str = Field(
+        description=(
+            "Medicine name, form and strength as written (e.g. 'Acebrofilina jarabe 50 mg/5 ml'), "
+            "without package details such as bottle or box size or unit count."
+        )
+    )
     dose: str = Field(description="Amount per intake as written, e.g. '1 tableta', '5 ml', '500 mg'.")
     times: list[str] = Field(
         description="Times of day to take it, 24h 'HH:MM'. Empty if the prescription gives no frequency."
