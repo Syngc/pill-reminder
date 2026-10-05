@@ -102,7 +102,9 @@ private fun Ringing(dose: RingingDose, language: AppLanguage, onTaken: () -> Uni
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            if (dose.time.isNotEmpty()) Text(dose.time, style = MaterialTheme.typography.displayLarge)
+            if (dose.time.isNotEmpty()) {
+                Text(rememberTimeFormatter().format(dose.time), style = MaterialTheme.typography.displayLarge)
+            }
             Text(
                 stringResource(if (dose.medications.size > 1) R.string.alarm_title_plural else R.string.alarm_title),
                 style = MaterialTheme.typography.headlineLarge,

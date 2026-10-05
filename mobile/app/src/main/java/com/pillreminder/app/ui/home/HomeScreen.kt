@@ -69,6 +69,7 @@ import com.pillreminder.app.alarm.AlarmService
 import com.pillreminder.app.data.AppLanguage
 import com.pillreminder.app.data.Medication
 import com.pillreminder.app.ui.TimesEditor
+import com.pillreminder.app.ui.rememberTimeFormatter
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -232,21 +233,26 @@ private fun TodaySlotCard(slot: TodaySlot) {
         SlotStatus.UPCOMING -> Triple(R.string.status_upcoming, Icons.Default.Schedule, MaterialTheme.colorScheme.surfaceVariant)
     }
     Card(colors = CardDefaults.cardColors(containerColor = container), modifier = Modifier.fillMaxWidth()) {
-        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(slot.time, style = MaterialTheme.typography.headlineLarge)
-            Spacer(Modifier.width(16.dp))
-            Column(Modifier.weight(1f)) {
-                slot.medications.forEach { Text("${it.name} · ${it.dose}", style = MaterialTheme.typography.bodyLarge) }
+        // Time and status on top, medicines below at full width, so long names and "6:00 p. m." both fit.
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    rememberTimeFormatter().format(slot.time),
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.weight(1f),
+                )
+                StatusChip(stringResource(label), icon)
             }
-            StatusChip(stringResource(label), icon)
+            slot.medications.forEach { Text("${it.name} · ${it.dose}", style = MaterialTheme.typography.bodyLarge) }
         }
     }
 }
 
 @Composable
 private fun StatusChip(text: String, icon: ImageVector) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, contentDescription = null)
+        Spacer(Modifier.width(6.dp))
         Text(text, style = MaterialTheme.typography.labelLarge)
     }
 }
@@ -264,7 +270,11 @@ private fun MedicationCard(med: Medication, onEditTimes: () -> Unit, onDelete: (
                 }
             }
             Text(med.dose, style = MaterialTheme.typography.bodyLarge)
-            Text(stringResource(R.string.med_times, med.times.joinToString("  ·  ")), style = MaterialTheme.typography.bodyLarge)
+            val timeFormat = rememberTimeFormatter()
+            Text(
+                stringResource(R.string.med_times, med.times.joinToString("  ·  ") { timeFormat.format(it) }),
+                style = MaterialTheme.typography.bodyLarge,
+            )
             if (med.instructions.isNotBlank()) Text(med.instructions, style = MaterialTheme.typography.bodyMedium)
             med.durationDays?.let { days ->
                 val last = med.startDate.plusDays(days.toLong() - 1)

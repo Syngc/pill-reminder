@@ -2,6 +2,7 @@ package com.pillreminder.app.ui
 
 import android.app.TimePickerDialog
 import android.content.Context
+import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,6 +53,7 @@ fun TimesEditor(
     beforePick: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val timeFormat = rememberTimeFormatter()
     val interval = times.intervalMinutes()
     var keepInterval by rememberSaveable { mutableStateOf(true) }
     val moveTogether = interval != null && keepInterval
@@ -70,11 +72,13 @@ fun TimesEditor(
                             onChange(if (moveTogether) times.shiftAll(time, picked) else times.replaceTime(time, picked))
                         }
                     },
-                    label = { Text(time, style = MaterialTheme.typography.titleMedium) },
-                    leadingIcon = { Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.change_time, time)) },
+                    label = { Text(timeFormat.format(time), style = MaterialTheme.typography.titleMedium) },
+                    leadingIcon = {
+                        Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.change_time, timeFormat.format(time)))
+                    },
                     trailingIcon = {
                         IconButton(onClick = { onChange(times - time) }) {
-                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.remove_time, time))
+                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.remove_time, timeFormat.format(time)))
                         }
                     },
                 )
@@ -154,6 +158,7 @@ private fun pickTime(context: Context, initial: String?, onPicked: (String) -> U
         { _, hour, minute -> onPicked(String.format(Locale.ROOT, "%02d:%02d", hour, minute)) },
         start.hour,
         start.minute,
-        true,
+        // Match the phone's clock: a 12-hour phone gets AM/PM, so 5:39 can't silently mean 05:39.
+        DateFormat.is24HourFormat(context),
     ).show()
 }
