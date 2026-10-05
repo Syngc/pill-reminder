@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mis Medicinas</string>
+
+    <string name="channel_alarms">Alarmas de medicinas</string>
+    <string name="channel_alarms_description">Suena a la hora de cada toma</string>
+
+    <!-- Alarm -->
+    <string name="alarm_title">Es hora de tu medicina</string>
+    <string name="alarm_title_plural">Es hora de tus medicinas</string>
+    <string name="alarm_test_text">Prueba de alarma</string>
+    <string name="alarm_confirmed">¡Muy bien!</string>
+
+    <!-- Home -->
+    <string name="home_today">Hoy</string>
+    <string name="home_no_doses_today">No hay tomas programadas para hoy.</string>
+    <string name="home_medicines">Medicinas</string>
+    <string name="home_empty">Todavía no hay medicinas. Pide a un familiar que agregue la receta.</string>
+    <string name="home_add_prescription">Agregar receta</string>
+    <string name="home_test_alarm">Probar alarma</string>
+    <string name="home_disclaimer">Esta app solo repite lo que dice la receta. No da consejos médicos. Ante cualquier duda, consulta a tu médico o farmacéutico.</string>
+    <string name="status_taken">Tomada</string>
+    <string name="status_missed">No confirmada</string>
+    <string name="status_pending">Pendiente</string>
+    <string name="status_upcoming">Más tarde</string>
+    <string name="med_times">Horas: %1$s</string>
+    <string name="med_until">Hasta el %1$s</string>
+    <string name="delete">Eliminar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete_title">¿Eliminar %1$s?</string>
+    <string name="delete_body">Dejará de sonar la alarma para esta medicina.</string>
+
+    <!-- Permissions -->
+    <string name="perm_notifications">Activa las notificaciones para que suenen las alarmas.</string>
+    <string name="perm_full_screen">Permite que la alarma se muestre en pantalla completa.</string>
+    <string name="perm_exact_alarm">Permite alarmas exactas para que suenen a la hora justa.</string>
+    <string name="perm_fix">Activar</string>
+
+    <!-- Add prescription -->
+    <string name="add_title">Agregar receta</string>
+    <string name="add_intro">Toma una foto clara de la receta, con buena luz y sin cortar el papel. Luego revisarás todo antes de guardar.</string>
+    <string name="add_take_photo">Tomar foto</string>
+    <string name="add_pick_photo">Elegir de la galería</string>
+    <string name="add_manual">Escribir a mano</string>
+    <string name="add_processing">Leyendo la receta…</string>
+    <string name="add_processing_hint">Esto puede tardar hasta un minuto.</string>
+    <string name="add_retry">Intentar de nuevo</string>
+    <string name="add_unreadable">No se pudo leer la receta. Toma otra foto o escribe las medicinas a mano.</string>
+
+    <!-- Review -->
+    <string name="review_title">Revisa la receta</string>
+    <string name="review_intro">Compara cada dato con la receta en papel y corrige lo necesario.</string>
+    <string name="review_name">Medicina</string>
+    <string name="review_dose">Dosis por toma</string>
+    <string name="review_times">Horas de la toma</string>
+    <string name="review_add_time">Agregar hora</string>
+    <string name="review_duration">Días de tratamiento (vacío = sin fin)</string>
+    <string name="review_instructions">Indicaciones de la receta</string>
+    <string name="review_check">Revisar</string>
+    <string name="review_times_suggested">La receta indica una frecuencia, no horas exactas. Ajusta las horas a la rutina de la persona.</string>
+    <string name="review_add_medicine">Agregar otra medicina</string>
+    <string name="review_remove_medicine">Quitar esta medicina</string>
+    <string name="review_confirm">Revisé que todo coincide con la receta.</string>
+    <string name="review_save">Guardar y activar alarmas</string>
+    <string name="review_missing">Cada medicina necesita nombre, dosis y al menos una hora.</string>
+    <string name="back">Atrás</string>
+
+    <!-- Language -->
+    <string name="language_title">Idioma</string>
+
+    <!-- Errors -->
+    <string name="error_no_connection">No hay conexión. Revisa el internet e intenta de nuevo.</string>
+    <string name="error_bad_response">Respuesta inesperada del servidor.</string>
+</resources>

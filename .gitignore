@@ -1,0 +1,25 @@
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.iml
+
+# Secrets: any .env file anywhere in the repo, but keep the templates
+.env
+.env.*
+!.env.example
+
+# Backend
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Mobile
+mobile/.gradle/
+mobile/build/
+mobile/app/build/
+mobile/local.properties
+mobile/.kotlin/
+*.apk
+*.keystore

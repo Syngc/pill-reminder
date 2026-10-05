@@ -1,0 +1,22 @@
+[project]
+name = "pill-reminder-backend"
+version = "0.1.0"
+description = "Prescription extraction service for the pill reminder app"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.70",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "python-multipart>=0.0.9",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "httpx>=0.27",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

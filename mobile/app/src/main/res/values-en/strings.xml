@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">My Medicines</string>
+
+    <string name="channel_alarms">Medicine alarms</string>
+    <string name="channel_alarms_description">Rings at the time of each dose</string>
+
+    <!-- Alarm -->
+    <string name="alarm_title">Time for your medicine</string>
+    <string name="alarm_title_plural">Time for your medicines</string>
+    <string name="alarm_test_text">Alarm test</string>
+    <string name="alarm_confirmed">Well done!</string>
+
+    <!-- Home -->
+    <string name="home_today">Today</string>
+    <string name="home_no_doses_today">No doses scheduled for today.</string>
+    <string name="home_medicines">Medicines</string>
+    <string name="home_empty">No medicines yet. Ask a family member to add the prescription.</string>
+    <string name="home_add_prescription">Add prescription</string>
+    <string name="home_test_alarm">Test alarm</string>
+    <string name="home_disclaimer">This app only repeats what the prescription says. It does not give medical advice. If you have any questions, ask your doctor or pharmacist.</string>
+    <string name="status_taken">Taken</string>
+    <string name="status_missed">Not confirmed</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_upcoming">Later</string>
+    <string name="med_times">Times: %1$s</string>
+    <string name="med_until">Until %1$s</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_title">Delete %1$s?</string>
+    <string name="delete_body">The alarm for this medicine will stop ringing.</string>
+
+    <!-- Permissions -->
+    <string name="perm_notifications">Turn on notifications so the alarms can ring.</string>
+    <string name="perm_full_screen">Allow the alarm to show on the full screen.</string>
+    <string name="perm_exact_alarm">Allow exact alarms so they ring right on time.</string>
+    <string name="perm_fix">Turn on</string>
+
+    <!-- Add prescription -->
+    <string name="add_title">Add prescription</string>
+    <string name="add_intro">Take a clear photo of the prescription, in good light and without cutting off the paper. You will check everything before saving.</string>
+    <string name="add_take_photo">Take photo</string>
+    <string name="add_pick_photo">Choose from gallery</string>
+    <string name="add_manual">Type it in</string>
+    <string name="add_processing">Reading the prescription…</string>
+    <string name="add_processing_hint">This can take up to a minute.</string>
+    <string name="add_retry">Try again</string>
+    <string name="add_unreadable">The prescription could not be read. Take another photo or type the medicines in.</string>
+
+    <!-- Review -->
+    <string name="review_title">Check the prescription</string>
+    <string name="review_intro">Compare each detail with the paper prescription and correct anything that is wrong.</string>
+    <string name="review_name">Medicine</string>
+    <string name="review_dose">Dose each time</string>
+    <string name="review_times">Times to take it</string>
+    <string name="review_add_time">Add time</string>
+    <string name="review_duration">Days of treatment (empty = no end)</string>
+    <string name="review_instructions">Instructions from the prescription</string>
+    <string name="review_check">Check</string>
+    <string name="review_times_suggested">The prescription gives a frequency, not exact times. Adjust the times to the person\'s routine.</string>
+    <string name="review_add_medicine">Add another medicine</string>
+    <string name="review_remove_medicine">Remove this medicine</string>
+    <string name="review_confirm">I checked that everything matches the prescription.</string>
+    <string name="review_save">Save and turn on alarms</string>
+    <string name="review_missing">Each medicine needs a name, a dose and at least one time.</string>
+    <string name="back">Back</string>
+
+    <!-- Language -->
+    <string name="language_title">Language</string>
+
+    <!-- Errors -->
+    <string name="error_no_connection">No connection. Check the internet and try again.</string>
+    <string name="error_bad_response">Unexpected response from the server.</string>
+</resources>
