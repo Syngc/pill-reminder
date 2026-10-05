@@ -4,6 +4,7 @@ import com.pillreminder.app.alarm.DoseMessage
 import com.pillreminder.app.data.AppLanguage
 import com.pillreminder.app.data.Medication
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Test
 import java.time.LocalDate
 
@@ -17,7 +18,7 @@ class DoseMessageTest {
     @Test fun spanishSingle() {
         assertEquals(
             "Es hora de tomar tu medicina. Losartán, 50 mg. Tomar con agua. " +
-                "Cuando termines, toca el botón verde que dice: ya me la tomé.",
+                "Cuando termines, toca el botón grande que dice: ya me la tomé.",
             DoseMessage.spoken(one, AppLanguage.SPANISH),
         )
     }
@@ -25,7 +26,7 @@ class DoseMessageTest {
     @Test fun spanishPlural() {
         assertEquals(
             "Es hora de tomar tus medicinas. Losartán, 50 mg. Metformina, 1 tableta. " +
-                "Cuando termines, toca el botón verde que dice: ya me las tomé.",
+                "Cuando termines, toca el botón grande que dice: ya me las tomé.",
             DoseMessage.spoken(two, AppLanguage.SPANISH),
         )
     }
@@ -33,7 +34,7 @@ class DoseMessageTest {
     @Test fun englishSingle() {
         assertEquals(
             "It's time to take your medicine. Losartan, 50 mg. Take with water. " +
-                "When you're done, tap the green button that says: i took it.",
+                "When you're done, tap the big button that says: I took it.",
             DoseMessage.spoken(listOf(med("Losartan", "50 mg", "Take with water")), AppLanguage.ENGLISH),
         )
     }
@@ -41,7 +42,7 @@ class DoseMessageTest {
     @Test fun englishPlural() {
         assertEquals(
             "It's time to take your medicines. Losartán, 50 mg. Metformina, 1 tableta. " +
-                "When you're done, tap the green button that says: i took them.",
+                "When you're done, tap the big button that says: I took them.",
             DoseMessage.spoken(two, AppLanguage.ENGLISH),
         )
     }
@@ -51,5 +52,13 @@ class DoseMessageTest {
         assertEquals("YA ME LAS TOMÉ", DoseMessage.confirmLabel(3, AppLanguage.SPANISH))
         assertEquals("I TOOK IT", DoseMessage.confirmLabel(1, AppLanguage.ENGLISH))
         assertEquals("I TOOK THEM", DoseMessage.confirmLabel(2, AppLanguage.ENGLISH))
+    }
+
+    @Test fun neverDescribesTheButtonByColor() {
+        val colors = listOf("verde", "green", "azul", "blue", "blanco", "white")
+        for (language in AppLanguage.entries) {
+            val text = DoseMessage.spoken(one, language).lowercase()
+            colors.forEach { assertFalse("\"$it\" in $language message", it in text) }
+        }
     }
 }

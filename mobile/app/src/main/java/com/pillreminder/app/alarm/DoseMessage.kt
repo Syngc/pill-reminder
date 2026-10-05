@@ -26,13 +26,16 @@ object DoseMessage {
             append(sentence("${med.name}, ${med.dose}"))
             if (med.instructions.isNotBlank()) append(sentence(med.instructions))
         }
+        // Describe the button by its size and words, never its color: colors change with the design and theme.
         append(
             when (language) {
-                AppLanguage.SPANISH -> "Cuando termines, toca el botón verde que dice: "
-                AppLanguage.ENGLISH -> "When you're done, tap the green button that says: "
+                AppLanguage.SPANISH -> "Cuando termines, toca el botón grande que dice: "
+                AppLanguage.ENGLISH -> "When you're done, tap the big button that says: "
             }
         )
-        append(confirmLabel(medications.size, language).lowercase(language.locale))
+        val label = confirmLabel(medications.size, language).lowercase(language.locale)
+        // English keeps "I" capitalized ("I took it").
+        append(if (language == AppLanguage.ENGLISH) label.replaceFirstChar { it.titlecase(language.locale) } else label)
         append(".")
     }
 
