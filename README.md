@@ -18,7 +18,7 @@ The app only repeats what the prescription says. It never gives medical advice.
 | --- | --- | --- |
 | [`backend/`](backend/) | Prescription extraction API | Python, FastAPI, Anthropic SDK |
 | [`mobile/`](mobile/) | Android app | Kotlin, Jetpack Compose, Room |
-| [`website/`](website/) | Project website (not started) | — |
+| [`website/`](website/) | Landing page with the download link, live at https://syngc.github.io/pill-reminder/ | HTML, CSS, GitHub Pages |
 
 ## Quick start
 
