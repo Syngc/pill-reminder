@@ -15,18 +15,18 @@ python3 -m http.server 8000
 
 ## Download link
 
-The button points to:
+The button points to the APK attached to the current release:
 
 ```
-https://github.com/Syngc/pill-reminder/releases/latest/download/MisMedicinas.apk
+https://github.com/Syngc/pill-reminder/releases/download/v0.6.1/MisMedicinas-0.6.1.apk
 ```
 
-GitHub serves this from the newest release, as long as that release has a file named exactly `MisMedicinas.apk`. To publish a new version:
+This link is tied to one version. For each new release:
 
-1. In the repo on GitHub: **Releases → Draft a new release**.
-2. Create a tag such as `v0.6.1`, and give the release a title.
-3. Attach the APK, renamed to `MisMedicinas.apk`.
-4. Publish. The website's button now downloads this version.
+1. In the repo on GitHub: **Releases → Draft a new release**, create a tag such as `v0.6.2`, attach the APK (for example `MisMedicinas-0.6.2.apk`) and publish.
+2. Update the `href` of the download button in `index.html` to the new file's link, then push. The site redeploys on its own.
+
+To never edit the site again, attach the APK under the same name in every release, for example `MisMedicinas.apk`, and use `https://github.com/Syngc/pill-reminder/releases/latest/download/MisMedicinas.apk`, which always serves the newest release.
 
 ## Hosting
 
