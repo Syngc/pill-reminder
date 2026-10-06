@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Medicines</string>
 
     <string name="channel_alarms">Medicine alarms</string>
     <string name="channel_alarms_active">Alarm on screen</string>

@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Status-bar icon: the same pill as the launcher icon, white only, as Android requires. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M4.22,11.29l5.07,-5.07c2.68,-2.68 7.02,-2.68 9.7,0 2.68,2.68 2.68,7.02 0,9.7l-5.07,5.07c-2.68,2.68 -7.02,2.68 -9.7,0 -2.68,-2.68 -2.68,-7.02 0,-9.7zM5.64,12.71c-1.9,1.9 -1.9,4.97 0,6.87 1.9,1.9 4.97,1.9 6.87,0l2.54,-2.54 -6.87,-6.87 -2.54,2.54z" />
+        android:pathData="M10.5,20.5 L3.5,13.5 A4.95,4.95 0 0,1 10.5,6.5 L17.5,13.5 A4.95,4.95 0 0,1 10.5,20.5 Z"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M8.5,8.5 L15.5,15.5"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
 </vector>

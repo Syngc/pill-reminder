@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mis Medicinas</string>
+    <string name="app_name" translatable="false">MedRing</string>
 
     <string name="channel_alarms">Alarmas de medicinas</string>
     <string name="channel_alarms_active">Alarma en pantalla</string>

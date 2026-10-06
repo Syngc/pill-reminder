@@ -24,8 +24,8 @@ android {
         applicationId = "com.pillreminder.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 9
-        versionName = "0.6.1"
+        versionCode = 10
+        versionName = "0.7.0"
 
         buildConfigField(
             "String", "BACKEND_URL",
@@ -86,6 +86,11 @@ tasks.matching { it.name == "preReleaseBuild" }.configureEach {
             "Set release.storeFile (and its passwords) in mobile/local.properties before building a release."
         }
     }
+}
+
+// APKs come out as MedRing-<version>-release.apk.
+base {
+    archivesName.set("MedRing-${android.defaultConfig.versionName}")
 }
 
 ksp {

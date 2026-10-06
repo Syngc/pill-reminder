@@ -26,7 +26,7 @@ release.keyPassword=…
 ### Release APK
 
 ```bash
-./gradlew assembleRelease    # → app/build/outputs/apk/release/app-release.apk
+./gradlew assembleRelease    # → app/build/outputs/apk/release/MedRing-<version>-release.apk
 ```
 
 The release build refuses to run without an `https://` backend URL and the signing key. **Back up the keystore file and its password together** (for example, in a password manager). Android installs an update only if it is signed with the same key, so losing the key means everyone has to uninstall and reinstall, losing their saved medicines. Bump `versionCode` in `app/build.gradle.kts` for every APK you hand out.
@@ -49,6 +49,9 @@ On a physical phone, use your machine's LAN IP or a deployed HTTPS URL. Cleartex
 Alarm behavior: rings for up to 3 minutes. If nobody confirms, it rings again after 10 minutes, up to 3 attempts, and then the dose is logged as *No confirmada*.
 
 ## Design
+
+The app is called **MedRing** in both languages (`app_name`, not translated). Its launcher icon is the website's pill: a white outlined capsule on the accent blue (`res/drawable/ic_launcher_foreground.xml`), with a monochrome layer for Android 13+ themed icons; the notification icon uses the same shape.
+
 
 The UI follows the "MedRing Redesign" canvas from Claude Design: a blue palette with a matching dark mode, text no smaller than 18sp, one main action per screen, and every status shown as icon + word + color ("Taken", "Now", "Later", "Not confirmed"). Colors and type live in `ui/theme/Theme.kt`, shared pieces (buttons, badges, chips, banners, icons) in `ui/components/`.
 

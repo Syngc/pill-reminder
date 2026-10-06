@@ -1,10 +1,10 @@
 // Spanish is written in the HTML; English is swapped in here. The choice is remembered per browser.
 const TEXT = {
   es: {
-    title: "Mis Medicinas · Recordatorios que suenan y hablan",
+    title: "MedRing · Recordatorios que suenan y hablan",
     description: "App para Android que ayuda a las personas mayores a tomar sus medicinas a tiempo: suena como una alarma y lee las indicaciones en voz alta.",
     skip: "Ir al contenido",
-    name: "Mis Medicinas",
+    name: "MedRing",
     eyebrow: "Para personas mayores y sus familias",
     headline: "Sus medicinas, a tiempo.",
     lead: "Un familiar toma una foto de la receta y la app lee cada medicina, su dosis y sus horas. A la hora de cada toma, el teléfono suena aunque esté bloqueado, lee las indicaciones en voz alta y la persona confirma con un solo botón grande.",
@@ -31,7 +31,7 @@ const TEXT = {
     installTitle: "Cómo instalarla",
     i1: "Toca «Descargar para Android» desde el teléfono.",
     i2: "Abre el archivo descargado. Si Android lo pide, permite instalar apps desde ese navegador («Instalar apps desconocidas»).",
-    i3: "Abre Mis Medicinas y permite las notificaciones y la alarma en pantalla completa.",
+    i3: "Abre MedRing y permite las notificaciones y la alarma en pantalla completa.",
     i4: "Toca «Probar alarma» para escuchar cómo suena.",
     privacyTitle: "Tu información",
     privacy: "Las medicinas se guardan solo en tu teléfono. La foto de la receta se envía de forma segura para leerla y no se guarda en nuestro servidor.",
@@ -39,10 +39,10 @@ const TEXT = {
     credits: "Hecha para el ML Empowerment Build Challenge. Tipografía Atkinson Hyperlegible Next (licencia SIL Open Font).",
   },
   en: {
-    title: "My Medicines · Reminders that ring and speak",
+    title: "MedRing · Reminders that ring and speak",
     description: "Android app that helps older adults take their medicines on time: it rings like an alarm and reads the instructions out loud.",
     skip: "Skip to content",
-    name: "My Medicines",
+    name: "MedRing",
     eyebrow: "For older adults and their families",
     headline: "Their medicines, on time.",
     lead: "A family member takes a photo of the prescription, and the app reads each medicine, its dose and its times. At every dose, the phone rings even when locked, reads the instructions out loud, and the person confirms with one big button.",
@@ -69,7 +69,7 @@ const TEXT = {
     installTitle: "How to install it",
     i1: "Tap “Download for Android” on the phone.",
     i2: "Open the downloaded file. If Android asks, allow installing apps from that browser (“Install unknown apps”).",
-    i3: "Open My Medicines and allow notifications and the full-screen alarm.",
+    i3: "Open MedRing and allow notifications and the full-screen alarm.",
     i4: "Tap “Test alarm” to hear how it sounds.",
     privacyTitle: "Your information",
     privacy: "Medicines are stored only on your phone. The prescription photo is sent securely to be read and is not stored on our server.",
