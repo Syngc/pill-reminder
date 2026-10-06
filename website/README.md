@@ -18,15 +18,15 @@ python3 -m http.server 8000
 The button points to the APK attached to the current release:
 
 ```
-https://github.com/Syngc/pill-reminder/releases/download/v0.6.1/MisMedicinas-0.6.1.apk
+https://github.com/Syngc/pill-reminder/releases/download/v0.7.0/MedRing-0.7.0.apk
 ```
 
 This link is tied to one version. For each new release:
 
-1. In the repo on GitHub: **Releases → Draft a new release**, create a tag such as `v0.6.2`, attach the APK (for example `MisMedicinas-0.6.2.apk`) and publish.
-2. Update the `href` of the download button in `index.html` to the new file's link, then push. The site redeploys on its own.
+1. In the repo on GitHub: **Releases → Draft a new release**, create a tag such as `v0.7.1`, attach the APK (for example `MedRing-0.7.1.apk`) and publish.
+2. Update the `href` of the download button in `index.html` to the new file's link, and the version number under it (`downloadNote` in `index.html` and in both languages in `script.js`), then push. The site redeploys on its own.
 
-To never edit the site again, attach the APK under the same name in every release, for example `MisMedicinas.apk`, and use `https://github.com/Syngc/pill-reminder/releases/latest/download/MisMedicinas.apk`, which always serves the newest release.
+To never edit the site again, attach the APK under the same name in every release, for example `MedRing.apk`, and use `https://github.com/Syngc/pill-reminder/releases/latest/download/MedRing.apk`, which always serves the newest release.
 
 ## Hosting
 
