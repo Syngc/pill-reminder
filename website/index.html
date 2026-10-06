@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mis Medicinas · Recordatorios que suenan y hablan</title>
+  <meta name="description" content="App para Android que ayuda a las personas mayores a tomar sus medicinas a tiempo: suena como una alarma y lee las indicaciones en voz alta.">
+  <meta name="theme-color" content="#1F47B8">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/AtkinsonHyperlegibleNext.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Ir al contenido</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="#">
+        <span class="logo" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+        </span>
+        <span data-i18n="name">Mis Medicinas</span>
+      </a>
+      <div class="language" role="group" aria-label="Idioma / Language">
+        <button type="button" data-lang="es" aria-pressed="true" lang="es">Español</button>
+        <button type="button" data-lang="en" aria-pressed="false" lang="en">English</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="title">
+      <div class="container">
+        <div>
+          <p class="eyebrow" data-i18n="eyebrow">Para personas mayores y sus familias</p>
+          <h1 id="title" data-i18n="headline">Sus medicinas, a tiempo.</h1>
+          <p class="lead" data-i18n="lead">Un familiar toma una foto de la receta y la app lee cada medicina, su dosis y sus horas. A la hora de cada toma, el teléfono suena aunque esté bloqueado, lee las indicaciones en voz alta y la persona confirma con un solo botón grande.</p>
+          <div class="download">
+            <a class="button-primary" href="https://github.com/Syngc/pill-reminder/releases/latest/download/MisMedicinas.apk" download>
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+              <span data-i18n="download">Descargar para Android</span>
+            </a>
+            <p class="download-note" data-i18n="downloadNote">Gratis · Android 8.0 o más reciente · Archivo APK</p>
+          </div>
+        </div>
+
+        <div class="phone" role="img" aria-label="Pantalla de alarma de la app: 8:00 p. m., Es hora de tu medicina, Losartán 50 mg, 1 tableta, botón Ya me la tomé" data-i18n-label="phoneLabel">
+          <div class="phone-screen" aria-hidden="true">
+            <div class="bell">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#12306E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            </div>
+            <div class="mock-time">8:00 <small data-i18n="pm">p. m.</small></div>
+            <div class="mock-title" data-i18n="mockTitle">Es hora de tu medicina</div>
+            <div class="mock-card">
+              <span class="mock-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F47B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+              </span>
+              <div><strong>Losartán 50 mg</strong><span data-i18n="mockDose">1 tableta</span></div>
+            </div>
+            <div class="mock-spacer"></div>
+            <div class="mock-button">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#12306E" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span data-i18n="mockButton">YA ME LA TOMÉ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="how">
+      <div class="container">
+        <h2 id="how" data-i18n="howTitle">Cómo funciona</h2>
+        <ol class="steps">
+          <li class="card">
+            <div class="step-icon" aria-hidden="true">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+            </div>
+            <span class="step-number" data-i18n="step1n">Paso 1</span>
+            <h3 data-i18n="step1t">Foto de la receta</h3>
+            <p data-i18n="step1d">Un familiar fotografía la receta y la inteligencia artificial lee las medicinas, dosis y horarios.</p>
+          </li>
+          <li class="card">
+            <div class="step-icon" aria-hidden="true">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+            <span class="step-number" data-i18n="step2n">Paso 2</span>
+            <h3 data-i18n="step2t">La familia revisa</h3>
+            <p data-i18n="step2d">Ninguna alarma se activa hasta que alguien compara cada dato con el papel y lo confirma.</p>
+          </li>
+          <li class="card">
+            <div class="step-icon" aria-hidden="true">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            </div>
+            <span class="step-number" data-i18n="step3n">Paso 3</span>
+            <h3 data-i18n="step3t">Suena a la hora</h3>
+            <p data-i18n="step3d">Alarma en pantalla completa, voz en español o inglés y un solo botón grande para confirmar.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section aria-labelledby="features">
+      <div class="container">
+        <h2 id="features" data-i18n="featuresTitle">Pensada para leerse fácil</h2>
+        <ul class="features">
+          <li data-i18n="f1">Letra grande y alto contraste</li>
+          <li data-i18n="f2">Español e inglés</li>
+          <li data-i18n="f3">Funciona con el teléfono bloqueado</li>
+          <li data-i18n="f4">Repite el mensaje cuando lo pidas</li>
+          <li data-i18n="f5">Solo repite lo que dice la receta</li>
+        </ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="install-title">
+      <div class="container install">
+        <div class="card">
+          <h2 id="install-title" data-i18n="installTitle">Cómo instalarla</h2>
+          <ol>
+            <li data-i18n="i1">Toca «Descargar para Android» desde el teléfono.</li>
+            <li data-i18n="i2">Abre el archivo descargado. Si Android lo pide, permite instalar apps desde ese navegador («Instalar apps desconocidas»).</li>
+            <li data-i18n="i3">Abre Mis Medicinas y permite las notificaciones y la alarma en pantalla completa.</li>
+            <li data-i18n="i4">Toca «Probar alarma» para escuchar cómo suena.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h2 data-i18n="privacyTitle">Tu información</h2>
+          <p class="note">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            <span data-i18n="privacy">Las medicinas se guardan solo en tu teléfono. La foto de la receta se envía de forma segura para leerla y no se guarda en nuestro servidor.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p data-i18n="disclaimer">Esta app solo repite lo que dice la receta. No da consejos médicos. Ante cualquier duda, consulta a tu médico o farmacéutico.</p>
+      <p data-i18n="credits">Hecha para el ML Empowerment Build Challenge. Tipografía Atkinson Hyperlegible Next (licencia SIL Open Font).</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
