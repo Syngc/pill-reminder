@@ -30,4 +30,6 @@ GitHub serves this from the newest release, as long as that release has a file n
 
 ## Hosting
 
-Any static host works: GitHub Pages, Netlify, Cloudflare Pages, or Firebase Hosting. Publish the contents of this folder as the site root.
+Published with GitHub Pages at **https://syngc.github.io/pill-reminder/** by `.github/workflows/pages.yml`, which redeploys whenever something in `website/` changes on `main`. It can also be run by hand from the repo's **Actions** tab (**Website → Run workflow**).
+
+One-time setup: in the repo on GitHub, **Settings → Pages → Build and deployment → Source: GitHub Actions**.
